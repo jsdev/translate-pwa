@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:github": "GITHUB_PAGES=true vite build",
+    "build:github": "cross-env GITHUB_PAGES=true vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "npm run build:github && gh-pages -d dist",
@@ -39,6 +39,7 @@
     "axe-html-reporter": "^2.2.11",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "chrome-launcher": "^1.2.0",
+    "cross-env": "^7.0.3",
     "eslint": "^9.9.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.11",

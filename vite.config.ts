@@ -69,14 +69,18 @@ export default defineConfig(({ command }) => {
       hmr: {
         port: 5173
       },
-      // Only apply security headers in production-like development
-      ...(isDev && {
-        headers: {
-          // Minimal headers for development to prevent CSP conflicts with SWC
-          'X-Frame-Options': 'DENY',
-          'X-Content-Type-Options': 'nosniff'
-        }
-      })
+      // CORS and security headers for development
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        // Less restrictive CSP for development
+        'Content-Security-Policy': isDev 
+          ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ws: wss:;"
+          : "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;"
+      }
     },
     // Vite 7.0.0 specific configuration
     define: {
