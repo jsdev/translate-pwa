@@ -1,126 +1,102 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { spawn } from 'child_process';
-import http from 'http';
 import fs from 'fs';
-import path from 'path';
 
-const PORT = 4174;
-const BASE_URL = `http://localhost:${PORT}`;
-
-// Routes to test for accessibility
-const routes = [
+// Import routes directly - these should match src/routes.ts
+const appRoutes = [
   '/',
   '/intake',
-  '/phrases', 
-  '/translation',
+  '/phrases',
   '/record',
+  '/translate',
   '/conversations',
-  '/settings'
+  '/settings',
 ];
 
-// Simple static file server for the dist directory
-function createServer() {
-  return http.createServer((req, res) => {
-    const url = req.url === '/' ? '/index.html' : req.url;
-    const filePath = path.join(process.cwd(), 'dist', url);
-    
-    // Handle SPA routing by serving index.html for unknown routes
-    const finalPath = fs.existsSync(filePath) ? filePath : path.join(process.cwd(), 'dist', 'index.html');
-    
-    fs.readFile(finalPath, (err, data) => {
-      if (err) {
-        res.writeHead(404);
-        res.end('Not found');
-        return;
-      }
-      
-      const ext = path.extname(finalPath);
-      const contentType = {
-        '.html': 'text/html',
-        '.css': 'text/css',
-        '.js': 'application/javascript',
-        '.json': 'application/json',
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.svg': 'image/svg+xml',
-      }[ext] || 'text/plain';
-      
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(data);
-    });
-  });
+const PORT = 8080;
+const BASE_URL = `http://localhost:${PORT}`;
+
+console.log('🚀 Starting accessibility tests for all app routes...\n');
+
+// Wait for server to be ready
+function waitForServer(maxAttempts = 30) {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      execSync(`curl -f -s ${BASE_URL} > /dev/null`, { stdio: 'ignore' });
+      console.log('✅ Server is ready');
+      return true;
+    } catch {
+      console.log(`   Waiting for server... (${i + 1}/${maxAttempts})`);
+      execSync('sleep 1');
+    }
+  }
+  console.log('❌ Server failed to start');
+  return false;
 }
 
-async function runAccessibilityTests() {
-  console.log('🚀 Starting accessibility tests...\n');
-  
-  // Start the server
-  const server = createServer();
-  server.listen(PORT);
-  console.log(`📡 Server running at ${BASE_URL}`);
-  
-  let allPassed = true;
-  const results = [];
-  
-  for (const route of routes) {
-    const url = `${BASE_URL}${route}`;
-    console.log(`\n🔍 Testing accessibility for: ${route}`);
+if (!waitForServer()) {
+  process.exit(1);
+}
+
+let allPassed = true;
+const results = [];
+
+for (const route of appRoutes) {
+  const url = `${BASE_URL}${route}`;
+  console.log(`\n🔍 Testing accessibility for: ${url}`);
+  try {
+    const result = execSync(
+      `npx axe ${url} --tags wcag2a,wcag2aa,section508 --save axe-report${route.replace(/\//g, '_') || '_root'}.json`,
+      { encoding: 'utf8', stdio: 'pipe', timeout: 45000 }
+    );
     
-    try {
-      // Run axe test for this specific URL
-      const result = execSync(
-        `npx axe ${url} --tags wcag2a,wcag2aa,section508 --reporter json`,
-        { encoding: 'utf8', timeout: 30000 }
-      );
-      
-      const report = JSON.parse(result);
+    // Check the generated report file instead of parsing stdout
+    const reportFileName = `axe-report${route.replace(/\//g, '_') || '_root'}.json`;
+    if (fs.existsSync(reportFileName)) {
+      const report = JSON.parse(fs.readFileSync(reportFileName, 'utf8'));
       const violations = report.violations || [];
       
       if (violations.length === 0) {
-        console.log(`   ✅ No accessibility violations found`);
+        console.log('   ✅ No accessibility violations found');
         results.push({ route, status: 'PASS', violations: 0 });
       } else {
-        console.log(`   ❌ Found ${violations.length} accessibility violation(s):`);
-        violations.forEach(violation => {
-          console.log(`      - ${violation.id}: ${violation.description}`);
-        });
+        console.log(`   ❌ Found ${violations.length} accessibility violation(s)`);
         results.push({ route, status: 'FAIL', violations: violations.length });
         allPassed = false;
       }
-    } catch (error) {
-      console.log(`   ❌ Error testing ${route}: ${error.message}`);
-      results.push({ route, status: 'ERROR', violations: -1 });
+    } else {
+      console.log('   ❌ Report file not generated');
+      results.push({ route, status: 'FAIL', violations: -1 });
       allPassed = false;
     }
-  }
-  
-  // Stop the server
-  server.close();
-  
-  // Print summary
-  console.log('\n📊 Accessibility Test Summary:');
-  console.log('================================');
-  results.forEach(({ route, status, violations }) => {
-    const emoji = status === 'PASS' ? '✅' : status === 'ERROR' ? '🔥' : '❌';
-    const violationText = violations >= 0 ? `(${violations} violations)` : '(error)';
-    console.log(`${emoji} ${route.padEnd(15)} ${status.padEnd(6)} ${violationText}`);
-  });
-  
-  const passed = results.filter(r => r.status === 'PASS').length;
-  const total = results.length;
-  
-  console.log(`\n🎯 Results: ${passed}/${total} routes passed accessibility tests`);
-  
-  if (allPassed) {
-    console.log('🎉 All accessibility tests passed! Government compliance achieved.');
-    process.exit(0);
-  } else {
-    console.log('💥 Some accessibility tests failed. Please fix violations before deployment.');
-    process.exit(1);
+  } catch (error) {
+    console.log(`   ❌ Error testing ${route}: ${error.message}`);
+    results.push({ route, status: 'FAILED', violations: -1 });
+    allPassed = false;
   }
 }
 
-// Wait a moment for server to start, then run tests
-setTimeout(runAccessibilityTests, 1000);
+console.log('\n📊 Accessibility Test Summary:');
+console.log('================================');
+results.forEach(({ route, status, violations }) => {
+  const emoji = status === 'PASS' ? '✅' : '❌';
+  const violationText = violations >= 0 ? `(${violations} violations)` : '(connection error)';
+  console.log(`${emoji} ${route.padEnd(15)} ${status.padEnd(6)} ${violationText}`);
+});
+
+const passed = results.filter(r => r.status === 'PASS').length;
+const failed = results.filter(r => r.status === 'FAILED').length;
+const total = results.length;
+
+console.log(`\n🎯 Results: ${passed}/${total} routes passed accessibility tests`);
+console.log(`   Passed: ${passed}`);
+console.log(`   Failed: ${failed}`);
+
+if (allPassed) {
+  console.log('🎉 All accessibility tests passed! Government compliance achieved.');
+  process.exit(0);
+} else {
+  console.log('💥 Some accessibility tests failed. Please fix violations before deployment.');
+  process.exit(1);
+}

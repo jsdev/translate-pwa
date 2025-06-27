@@ -15,9 +15,10 @@
     "lighthouse:routes": "node scripts/lighthouse-routes.mjs",
     "lighthouse:test": "node scripts/test-lighthouse.mjs",
     "lighthouse:open": "npm run build && lhci autorun --config=./lighthouserc.cjs && open ./lighthouse-results/index.html",
-    "accessibility:test": "node scripts/accessibility-test.mjs",
-    "accessibility:report": "npm run build && axe --dir dist --tags wcag2a,wcag2aa,section508 --save axe-report.json",
-    "accessibility:ci": "node scripts/accessibility-test.mjs"
+    "accessibility:test": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test.mjs; pkill -f 'spa-server.py' || true",
+    "accessibility:report": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-report.mjs; pkill -f 'spa-server.py' || true",
+    "accessibility:html": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-html-report.mjs; pkill -f 'spa-server.py' || true",
+    "accessibility:ci": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test.mjs; pkill -f 'spa-server.py' || true"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -35,6 +36,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.18",
+    "axe-html-reporter": "^2.2.11",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "chrome-launcher": "^1.2.0",
     "eslint": "^9.9.1",

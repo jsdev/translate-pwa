@@ -39,6 +39,11 @@ lhci_reports/
 axe-report.json
 accessibility-report.json
 a11y-report/
+accessibility-reports/
+axe-report*.json
+axe-report*.html
+axe-summary-report.json
+accessibility-summary.json
 
 # Duplicate/backup config files
 lighthouserc.js

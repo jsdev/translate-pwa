@@ -29,24 +29,25 @@ jobs:
     - name: Install axe CLI
       run: npm install -g @axe-core/cli
       
-    - name: Run accessibility tests
+    - name: Run accessibility tests with HTML reports
       run: |
-        echo "🔍 Running axe accessibility tests..."
-        # Test the built application with comprehensive accessibility rules
-        axe --dir dist \
-          --tags wcag2a,wcag2aa,section508,best-practice \
-          --exclude '#webpack-dev-server-client-overlay' \
-          --save accessibility-report.json \
-          --reporter json \
-          --exit
+        echo "🔍 Running axe accessibility tests with HTML report generation..."
+        npm run accessibility:html
+        # Rename HTML files to have proper extensions
+        cd accessibility-reports
+        for f in axe-report-_*; do 
+          if [[ ! "$f" == *.json ]] && [[ ! "$f" == *.html ]]; then 
+            mv "$f" "$f.html"
+          fi
+        done
       continue-on-error: false
       
-    - name: Upload accessibility report
+    - name: Upload accessibility reports
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: accessibility-report
-        path: accessibility-report.json
+        name: accessibility-reports
+        path: accessibility-reports/
         retention-days: 30
         
     - name: Comment on PR with results

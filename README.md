@@ -96,9 +96,43 @@ npm install -g @axe-core/cli
 # Test all routes for accessibility violations
 npm run accessibility:test
 
-# Generate detailed accessibility report
+# Generate detailed JSON accessibility reports
 npm run accessibility:report
+
+# Generate HTML accessibility reports with visual interface
+npm run accessibility:html
+
+# CI/CD accessibility testing
+npm run accessibility:ci
 ```
+
+#### Accessibility Reports
+The HTML accessibility reports provide:
+- **Master Summary**: `accessibility-reports/index.html` - Overview of all routes
+- **Individual Reports**: `accessibility-reports/axe-report-{route}.html` - Detailed analysis per route
+- **JSON Data**: `accessibility-reports/*.json` - Machine-readable results for CI/CD
+
+All reports include:
+- WCAG 2.1 AA compliance status
+- Section 508 compliance status
+- Detailed violation descriptions with remediation guidance
+- Pass/fail metrics and trending
+
+### Development Server
+For testing SPA routing locally, the project includes a custom SPA server:
+
+```bash
+# Start SPA-compatible development server
+cd dist && python3 ../scripts/spa-server.py 8080
+
+# Features:
+# - Client-side routing support
+# - Fallback to index.html for routes
+# - Static asset serving
+# - CORS handling for testing
+```
+
+The SPA server script (`scripts/spa-server.py`) automatically handles client-side routing by serving `index.html` for any route that doesn't correspond to a static file, enabling proper testing of React Router routes.
 
 ### Route Coverage
 All routes are automatically tested for perfect scores:
@@ -109,6 +143,29 @@ All routes are automatically tested for perfect scores:
 - `/record` - Audio recording and playback
 - `/conversations` - History and audit trail
 - `/settings` - User preferences and configuration
+
+## 🧭 Dynamic Route-Driven Testing
+
+All automated quality checks (Lighthouse, axe accessibility) use a single source of truth for app routes:
+- **`src/routes.ts`** exports all current app routes as an array.
+- Test scripts and CI import this array, so tests always match the app's router.
+- Add or remove routes in `src/routes.ts` and all tests update automatically.
+
+**Example:**
+```ts
+// src/routes.ts
+export const appRoutes = [
+  '/',
+  '/intake',
+  '/phrases',
+  '/record',
+  '/translate',
+  '/conversations',
+  '/settings',
+];
+```
+
+**No more manual updates!**
 
 ## 📚 Documentation & Architecture
 

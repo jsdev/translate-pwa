@@ -52,19 +52,19 @@ export function MobileHeader() {
           <div className="flex items-center gap-1">
             {isOnline ? (
               <div 
-                className="flex items-center gap-1 text-green-600 dark:text-green-400"
-                aria-label="Online"
+                className="flex items-center gap-1 text-green-700 dark:text-green-300"
+                role="status"
+                aria-label="Connection status: Online"
               >
                 <Wifi className="w-4 h-4" />
-                <span className="text-xs font-medium">Online</span>
               </div>
             ) : (
               <div 
-                className="flex items-center gap-1 text-red-600 dark:text-red-400"
-                aria-label="Offline"
+                className="flex items-center gap-1 text-red-700 dark:text-red-300"
+                role="status"
+                aria-label="Connection status: Offline"
               >
                 <WifiOff className="w-4 h-4" />
-                <span className="text-xs font-medium">Offline</span>
               </div>
             )}
           </div>
