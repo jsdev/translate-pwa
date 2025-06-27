@@ -4,18 +4,21 @@
   <meta charset="utf-8">
   <title>ICE/CBP Translation Tool</title>
   <script>
-    // GitHub Pages SPA redirect
+    // GitHub Pages SPA redirect for /translate-pwa/ subdirectory
     // This script redirects all routes to index.html with the route as a query parameter
-    // The main app will handle the routing from there
-    const pathSegmentsToKeep = 1;
+    const pathSegmentsToKeep = 2; // Keep "translate-pwa" + one more segment for proper routing
     const l = window.location;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash
-    );
+    
+    // Only redirect if we're not already at the root index
+    if (l.pathname !== '/translate-pwa/' && l.pathname !== '/translate-pwa/index.html') {
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        '/translate-pwa/?/' +
+        l.pathname.slice('/translate-pwa/'.length).replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    }
   </script>
 </head>
 <body>

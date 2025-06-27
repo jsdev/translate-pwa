@@ -70,8 +70,11 @@ const MobileApp = () => {
 };
 
 function App() {
+  // Set basename for GitHub Pages deployment
+  const basename = import.meta.env.VITE_BASE_URL || '/';
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <PhoneWrapper>
         <MobileApp />
       </PhoneWrapper>

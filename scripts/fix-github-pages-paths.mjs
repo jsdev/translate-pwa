@@ -48,6 +48,49 @@ if (process.env.GITHUB_PAGES === 'true') {
     console.log('Manifest updated successfully');
   }
   
+  // Ensure 404.html has the correct redirect logic for GitHub Pages
+  const notFoundPath = path.join(distDir, '404.html');
+  if (fs.existsSync(notFoundPath)) {
+    console.log('Verifying 404.html for GitHub Pages...');
+    let html404 = fs.readFileSync(notFoundPath, 'utf8');
+    
+    // Make sure the 404.html uses the correct base path
+    if (!html404.includes('/translate-pwa/')) {
+      console.log('Updating 404.html redirect paths...');
+      html404 = html404.replace(
+        /l\.pathname\.slice\(1\)\.split\('\/'\)\.slice\(pathSegmentsToKeep\)/g,
+        "l.pathname.slice('/translate-pwa/'.length)"
+      );
+      html404 = html404.replace(
+        /l\.pathname\.split\('\/'\)\.slice\(0, 1 \+ pathSegmentsToKeep\)\.join\('\/'\)/g,
+        "'/translate-pwa'"
+      );
+      fs.writeFileSync(notFoundPath, html404);
+      console.log('404.html updated for GitHub Pages');
+    } else {
+      console.log('404.html already configured for GitHub Pages');
+    }
+  }
+  
+  // Update index.html to include base href for GitHub Pages
+  const indexPath = path.join(distDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    console.log('Adding base href to index.html...');
+    let indexHtml = fs.readFileSync(indexPath, 'utf8');
+    
+    // Add base href if it doesn't exist
+    if (!indexHtml.includes('<base href=')) {
+      indexHtml = indexHtml.replace(
+        '<meta charset="UTF-8" />',
+        '<meta charset="UTF-8" />\n    <base href="/translate-pwa/">'
+      );
+      fs.writeFileSync(indexPath, indexHtml);
+      console.log('Base href added to index.html');
+    } else {
+      console.log('Base href already exists in index.html');
+    }
+  }
+  
   console.log('Note: index.html paths are handled by Vite base configuration');
   console.log('GitHub Pages post-processing complete!');
 } else {
