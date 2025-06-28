@@ -46,9 +46,9 @@ const MobileApp = () => {
   }, [theme]);
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden" lang="en">
       <MobileHeader />
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden" role="main" aria-label="Main application content">
         <Routes>
           <Route path="/" element={<Navigate to="/intake" replace />} />
           <Route path="/intake" element={<IntakePage />} />

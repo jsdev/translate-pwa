@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:github": "cross-env GITHUB_PAGES=true vite build && cross-env GITHUB_PAGES=true node scripts/fix-github-pages-paths.mjs",
+    "build": "vite build && node scripts/seo-setup.mjs",
+    "build:github": "cross-env GITHUB_PAGES=true vite build && cross-env GITHUB_PAGES=true node scripts/fix-github-pages-paths.mjs && cross-env GITHUB_PAGES=true node scripts/seo-setup.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "preview:github": "cross-env GITHUB_PAGES=true vite preview",

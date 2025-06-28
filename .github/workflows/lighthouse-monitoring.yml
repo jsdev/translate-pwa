@@ -40,7 +40,7 @@ jobs:
         id: lighthouse-scores
         run: |
           # Find the latest lighthouse results
-          RESULTS_FILE=$(find lighthouse-results -name "*.json" | head -1)
+          RESULTS_FILE=$(find lighthouse-results -name "*.json" -type f | sort -n | tail -1)
           
           if [ -f "$RESULTS_FILE" ]; then
             echo "📊 Extracting scores from: $RESULTS_FILE"
@@ -48,8 +48,27 @@ jobs:
             # Extract scores using Node.js
             node -e "
               const fs = require('fs');
-              const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
-              const scores = results.categories;
+              try {
+                const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+                
+                // Handle different Lighthouse result structures
+                let scores;
+                if (results.lhr && results.lhr.categories) {
+                  scores = results.lhr.categories;
+                } else if (results.categories) {
+                  scores = results.categories;
+                } else if (Array.isArray(results) && results[0] && results[0].lhr) {
+                  scores = results[0].lhr.categories;
+                } else if (Array.isArray(results) && results[0] && results[0].categories) {
+                  scores = results[0].categories;
+                } else {
+                  console.log('PERFORMANCE=0');
+                  console.log('ACCESSIBILITY=0');
+                  console.log('BEST_PRACTICES=0');
+                  console.log('SEO=0');
+                  console.log('PWA=0');
+                  process.exit(0);
+                }
               
               const performance = Math.round((scores.performance?.score || 0) * 100);
               const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
@@ -70,9 +89,18 @@ jobs:
                 'best_practices=' + bestPractices,
                 'seo=' + seo,
                 'pwa=' + pwa
-              ].join('\n');
+              ].join('\\n');
               
               console.log('Writing to GITHUB_OUTPUT:', output);
+              
+              } catch (error) {
+                console.log('Error parsing results:', error.message);
+                console.log('PERFORMANCE=0');
+                console.log('ACCESSIBILITY=0');
+                console.log('BEST_PRACTICES=0');
+                console.log('SEO=0');
+                console.log('PWA=0');
+              }
             " >> $GITHUB_OUTPUT
           else
             echo "⚠️ No Lighthouse results found"

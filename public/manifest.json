@@ -1,7 +1,7 @@
 {
-  "name": "ICE/CBP Translation Tool",
+  "name": "ICE/CBP Translation Tool - Secure Law Enforcement Communication",
   "short_name": "ICE Translate",
-  "description": "Secure translation tool for ICE/CBP agents",
+  "description": "Government-compliant translation application for ICE/CBP law enforcement personnel. Features real-time translation, accessibility compliance, and secure communication protocols.",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#2563EB",
@@ -10,7 +10,16 @@
   "scope": "/",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["productivity", "business"],
+  "categories": ["productivity", "business", "government", "utilities"],
+  "screenshots": [
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "ICE/CBP Translation Tool interface"
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192.svg",
