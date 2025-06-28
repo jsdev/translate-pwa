@@ -39,7 +39,6 @@ jobs:
         run: npm run build:github
         env:
           GITHUB_PAGES: true
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -81,7 +80,6 @@ jobs:
         run: npm run build:github
         env:
           GITHUB_PAGES: true
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
 
       - name: Wait for deployment
         run: sleep 30

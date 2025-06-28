@@ -232,7 +232,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Find and parse latest results
-          RESULTS_FILE=$(find lighthouse-results -name "*.json" | head -1)
+          RESULTS_FILE=$(find lighthouse-results -name "*.json" -type f | sort -n | tail -1)
           
           if [ -f "$RESULTS_FILE" ]; then
             echo "📈 **Lighthouse Scores:**" >> $GITHUB_STEP_SUMMARY
@@ -240,8 +240,23 @@ jobs:
             
             node -e "
               const fs = require('fs');
-              const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
-              const scores = results.categories;
+              try {
+                const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+                
+                // Handle different Lighthouse result structures
+                let scores;
+                if (results.lhr && results.lhr.categories) {
+                  scores = results.lhr.categories;
+                } else if (results.categories) {
+                  scores = results.categories;
+                } else if (Array.isArray(results) && results[0] && results[0].lhr) {
+                  scores = results[0].lhr.categories;
+                } else if (Array.isArray(results) && results[0] && results[0].categories) {
+                  scores = results[0].categories;
+                } else {
+                  console.log('⚠️ No valid Lighthouse scores found');
+                  process.exit(0);
+                }
               
               const performance = Math.round((scores.performance?.score || 0) * 100);
               const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
@@ -253,11 +268,20 @@ jobs:
               
               console.log('| Category | Score | Status |');
               console.log('|----------|-------|--------|');
-              console.log(\`| \${getEmoji(performance)} Performance | \${performance}/100 | \${performance >= 95 ? 'Excellent' : 'Good'} |\`);
-              console.log(\`| \${getEmoji(accessibility)} Accessibility | \${accessibility}/100 | \${accessibility >= 100 ? 'Perfect' : 'Good'} |\`);
-              console.log(\`| \${getEmoji(bestPractices)} Best Practices | \${bestPractices}/100 | \${bestPractices >= 95 ? 'Excellent' : 'Good'} |\`);
-              console.log(\`| \${getEmoji(seo)} SEO | \${seo}/100 | \${seo >= 95 ? 'Excellent' : 'Good'} |\`);
-              console.log(\`| \${getEmoji(pwa)} PWA | \${pwa}/100 | \${pwa >= 80 ? 'Good' : 'Needs Work'} |\`);
+              console.log(\`| \${getEmoji(performance)} Performance | \${performance}/100 | \${performance >= 95 ? 'Excellent' : performance >= 90 ? 'Good' : 'Needs Improvement'} |\`);
+              console.log(\`| \${getEmoji(accessibility)} Accessibility | \${accessibility}/100 | \${accessibility >= 100 ? 'Perfect (Section 508)' : 'Needs Improvement'} |\`);
+              console.log(\`| \${getEmoji(bestPractices)} Best Practices | \${bestPractices}/100 | \${bestPractices >= 95 ? 'Excellent (Secure)' : 'Review Needed'} |\`);
+              console.log(\`| \${getEmoji(seo)} SEO | \${seo}/100 | \${seo >= 95 ? 'Excellent' : seo >= 90 ? 'Good' : 'Needs Improvement'} |\`);
+              console.log(\`| \${getEmoji(pwa)} PWA | \${pwa}/100 | \${pwa >= 90 ? 'Excellent' : pwa >= 80 ? 'Good' : 'Needs Work'} |\`);
+              
+              // Government compliance summary
+              const isCompliant = accessibility >= 100 && bestPractices >= 95 && seo >= 95 && performance >= 90;
+              console.log('');
+              console.log(\`**🏛️ Government Standards:** \${isCompliant ? '✅ FULLY COMPLIANT' : '⚠️ REVIEW REQUIRED'}\`);
+              
+              } catch (error) {
+                console.log('❌ Error parsing Lighthouse results:', error.message);
+              }
             " >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ No results found" >> $GITHUB_STEP_SUMMARY
