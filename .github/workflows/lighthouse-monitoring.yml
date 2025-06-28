@@ -45,63 +45,68 @@ jobs:
           if [ -f "$RESULTS_FILE" ]; then
             echo "📊 Extracting scores from: $RESULTS_FILE"
             
-            # Extract scores using Node.js
-            node -e "
-              const fs = require('fs');
-              try {
-                const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+            # Extract scores using dedicated script
+            SCORES_OUTPUT=$(node scripts/parse-lighthouse-results.cjs "$RESULTS_FILE" 2>/dev/null | grep -E "^\| [🟢🟡🔴]" | head -5)
+            
+            # Parse the output to extract individual scores
+            PERFORMANCE=$(echo "$SCORES_OUTPUT" | grep "Performance" | sed -n 's/.*\*\*\([0-9]*\)\/100\*\*.*/\1/p')
+            ACCESSIBILITY=$(echo "$SCORES_OUTPUT" | grep "Accessibility" | sed -n 's/.*\*\*\([0-9]*\)\/100\*\*.*/\1/p')
+            BEST_PRACTICES=$(echo "$SCORES_OUTPUT" | grep "Best Practices" | sed -n 's/.*\*\*\([0-9]*\)\/100\*\*.*/\1/p')
+            SEO=$(echo "$SCORES_OUTPUT" | grep "SEO" | sed -n 's/.*\*\*\([0-9]*\)\/100\*\*.*/\1/p')
+            PWA=$(echo "$SCORES_OUTPUT" | grep "PWA" | sed -n 's/.*\*\*\([0-9]*\)\/100\*\*.*/\1/p')
+            
+            # Fallback to direct parsing if regex extraction fails
+            if [ -z "$PERFORMANCE" ] || [ -z "$ACCESSIBILITY" ] || [ -z "$BEST_PRACTICES" ] || [ -z "$SEO" ] || [ -z "$PWA" ]; then
+              echo "⚠️ Regex extraction failed, using direct parsing..."
+              EXTRACTED=$(node -e "
+                const fs = require('fs');
+                try {
+                  const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+                  
+                  let scores;
+                  if (results.lhr && results.lhr.categories) {
+                    scores = results.lhr.categories;
+                  } else if (results.categories) {
+                    scores = results.categories;
+                  } else if (Array.isArray(results) && results[0] && results[0].lhr) {
+                    scores = results[0].lhr.categories;
+                  } else if (Array.isArray(results) && results[0] && results[0].categories) {
+                    scores = results[0].categories;
+                  } else {
+                    console.log('0,0,0,0,0');
+                    process.exit(0);
+                  }
                 
-                // Handle different Lighthouse result structures
-                let scores;
-                if (results.lhr && results.lhr.categories) {
-                  scores = results.lhr.categories;
-                } else if (results.categories) {
-                  scores = results.categories;
-                } else if (Array.isArray(results) && results[0] && results[0].lhr) {
-                  scores = results[0].lhr.categories;
-                } else if (Array.isArray(results) && results[0] && results[0].categories) {
-                  scores = results[0].categories;
-                } else {
-                  console.log('PERFORMANCE=0');
-                  console.log('ACCESSIBILITY=0');
-                  console.log('BEST_PRACTICES=0');
-                  console.log('SEO=0');
-                  console.log('PWA=0');
-                  process.exit(0);
+                const performance = Math.round((scores.performance?.score || 0) * 100);
+                const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
+                const bestPractices = Math.round((scores['best-practices']?.score || 0) * 100);
+                const seo = Math.round((scores.seo?.score || 0) * 100);
+                const pwa = Math.round((scores.pwa?.score || 0) * 100);
+                
+                console.log(performance + ',' + accessibility + ',' + bestPractices + ',' + seo + ',' + pwa);
+                
+                } catch (error) {
+                  console.log('0,0,0,0,0');
                 }
+              ")
               
-              const performance = Math.round((scores.performance?.score || 0) * 100);
-              const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
-              const bestPractices = Math.round((scores['best-practices']?.score || 0) * 100);
-              const seo = Math.round((scores.seo?.score || 0) * 100);
-              const pwa = Math.round((scores.pwa?.score || 0) * 100);
-              
-              console.log('PERFORMANCE=' + performance);
-              console.log('ACCESSIBILITY=' + accessibility);
-              console.log('BEST_PRACTICES=' + bestPractices);
-              console.log('SEO=' + seo);
-              console.log('PWA=' + pwa);
-              
-              // Save to GitHub outputs
-              const output = [
-                'performance=' + performance,
-                'accessibility=' + accessibility,
-                'best_practices=' + bestPractices,
-                'seo=' + seo,
-                'pwa=' + pwa
-              ].join('\\n');
-              
-              console.log('Writing to GITHUB_OUTPUT:', output);
-              
-              } catch (error) {
-                console.log('Error parsing results:', error.message);
-                console.log('PERFORMANCE=0');
-                console.log('ACCESSIBILITY=0');
-                console.log('BEST_PRACTICES=0');
-                console.log('SEO=0');
-                console.log('PWA=0');
-              }
-            " >> $GITHUB_OUTPUT
+              IFS=',' read -r PERFORMANCE ACCESSIBILITY BEST_PRACTICES SEO PWA <<< "$EXTRACTED"
+            fi
+            
+            # Set defaults if still empty
+            PERFORMANCE=${PERFORMANCE:-0}
+            ACCESSIBILITY=${ACCESSIBILITY:-0}
+            BEST_PRACTICES=${BEST_PRACTICES:-0}
+            SEO=${SEO:-0}
+            PWA=${PWA:-0}
+            
+            echo "performance=$PERFORMANCE" >> $GITHUB_OUTPUT
+            echo "accessibility=$ACCESSIBILITY" >> $GITHUB_OUTPUT
+            echo "best_practices=$BEST_PRACTICES" >> $GITHUB_OUTPUT
+            echo "seo=$SEO" >> $GITHUB_OUTPUT
+            echo "pwa=$PWA" >> $GITHUB_OUTPUT
+            
+            echo "📊 Extracted scores: P=$PERFORMANCE A=$ACCESSIBILITY BP=$BEST_PRACTICES S=$SEO PWA=$PWA"
           else
             echo "⚠️ No Lighthouse results found"
             echo "performance=0" >> $GITHUB_OUTPUT
@@ -238,51 +243,8 @@ jobs:
             echo "📈 **Lighthouse Scores:**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            node -e "
-              const fs = require('fs');
-              try {
-                const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
-                
-                // Handle different Lighthouse result structures
-                let scores;
-                if (results.lhr && results.lhr.categories) {
-                  scores = results.lhr.categories;
-                } else if (results.categories) {
-                  scores = results.categories;
-                } else if (Array.isArray(results) && results[0] && results[0].lhr) {
-                  scores = results[0].lhr.categories;
-                } else if (Array.isArray(results) && results[0] && results[0].categories) {
-                  scores = results[0].categories;
-                } else {
-                  console.log('⚠️ No valid Lighthouse scores found');
-                  process.exit(0);
-                }
-              
-              const performance = Math.round((scores.performance?.score || 0) * 100);
-              const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
-              const bestPractices = Math.round((scores['best-practices']?.score || 0) * 100);
-              const seo = Math.round((scores.seo?.score || 0) * 100);
-              const pwa = Math.round((scores.pwa?.score || 0) * 100);
-              
-              const getEmoji = (score) => score >= 90 ? '🟢' : score >= 70 ? '🟡' : '🔴';
-              
-              console.log('| Category | Score | Status |');
-              console.log('|----------|-------|--------|');
-              console.log(\`| \${getEmoji(performance)} Performance | \${performance}/100 | \${performance >= 95 ? 'Excellent' : performance >= 90 ? 'Good' : 'Needs Improvement'} |\`);
-              console.log(\`| \${getEmoji(accessibility)} Accessibility | \${accessibility}/100 | \${accessibility >= 100 ? 'Perfect (Section 508)' : 'Needs Improvement'} |\`);
-              console.log(\`| \${getEmoji(bestPractices)} Best Practices | \${bestPractices}/100 | \${bestPractices >= 95 ? 'Excellent (Secure)' : 'Review Needed'} |\`);
-              console.log(\`| \${getEmoji(seo)} SEO | \${seo}/100 | \${seo >= 95 ? 'Excellent' : seo >= 90 ? 'Good' : 'Needs Improvement'} |\`);
-              console.log(\`| \${getEmoji(pwa)} PWA | \${pwa}/100 | \${pwa >= 90 ? 'Excellent' : pwa >= 80 ? 'Good' : 'Needs Work'} |\`);
-              
-              // Government compliance summary
-              const isCompliant = accessibility >= 100 && bestPractices >= 95 && seo >= 95 && performance >= 90;
-              console.log('');
-              console.log(\`**🏛️ Government Standards:** \${isCompliant ? '✅ FULLY COMPLIANT' : '⚠️ REVIEW REQUIRED'}\`);
-              
-              } catch (error) {
-                console.log('❌ Error parsing Lighthouse results:', error.message);
-              }
-            " >> $GITHUB_STEP_SUMMARY
+            # Use the dedicated parser script
+            node scripts/parse-lighthouse-results.cjs "$RESULTS_FILE" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ No results found" >> $GITHUB_STEP_SUMMARY
           fi
