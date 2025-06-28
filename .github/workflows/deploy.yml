@@ -76,17 +76,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build for GitHub Pages
+        run: npm run build:github
+        env:
+          GITHUB_PAGES: true
+
       - name: Wait for deployment
         run: sleep 30
 
       - name: Run Lighthouse CI on deployed site
         run: |
-          # Update Lighthouse config to test the deployed GitHub Pages URL
-          sed -i 's|http://localhost:4173|https://${{ github.repository_owner }}.github.io/translate-pwa|g' lighthouserc.cjs
           echo "🚨 Running Lighthouse CI on production deployment..."
           npm run lighthouse:ci || echo "⚠️ Lighthouse audit completed - check results"
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PAGES: true  # Tell Lighthouse config to use base path URLs
         continue-on-error: true
 
       - name: Generate Production Lighthouse Summary
