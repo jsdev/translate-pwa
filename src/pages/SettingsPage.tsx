@@ -3,6 +3,7 @@ import { ArrowLeft, Monitor, Sun, Moon, Info, Smile, RotateCcw } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import { defaultSettings } from '../config/defaultSettings';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 export const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +14,10 @@ export const SettingsPage: React.FC = () => {
     toggleTips, 
     showEmojis, 
     toggleEmojis, 
+    sourceLanguage,
+    targetLanguage,
+    setSourceLanguage,
+    setTargetLanguage,
     resetDismissedTips,
     resetToDefaults
   } = useAppStore();
@@ -30,7 +35,9 @@ export const SettingsPage: React.FC = () => {
   const isUsingDefaults = 
     theme === defaultSettings.theme &&
     showTips === defaultSettings.showTips &&
-    showEmojis === defaultSettings.showEmojis;
+    showEmojis === defaultSettings.showEmojis &&
+    sourceLanguage === defaultSettings.sourceLanguage &&
+    targetLanguage === defaultSettings.targetLanguage;
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
@@ -103,6 +110,27 @@ export const SettingsPage: React.FC = () => {
                     </div>
                   );
                 })}
+              </div>
+            </fieldset>
+          </section>
+
+          {/* Language Selection */}
+          <section className="border-b border-gray-200 dark:border-gray-700">
+            <fieldset>
+              <legend className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Languages</legend>
+              <div className="p-4 space-y-4">
+                <LanguageSelector
+                  selectedLanguage={sourceLanguage}
+                  onLanguageChange={setSourceLanguage}
+                  label="Officer Language (Source)"
+                  className="w-full"
+                />
+                <LanguageSelector
+                  selectedLanguage={targetLanguage}
+                  onLanguageChange={setTargetLanguage}
+                  label="Detained Person Language (Target)"
+                  className="w-full"
+                />
               </div>
             </fieldset>
           </section>

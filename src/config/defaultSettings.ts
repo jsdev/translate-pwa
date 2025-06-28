@@ -1,13 +1,19 @@
+import { defaultSourceLanguage, defaultTargetLanguage } from './languages';
+
 export interface AppSettings {
   showTips: boolean;
   showEmojis: boolean;
   theme: 'light' | 'dark' | 'system';
+  sourceLanguage: string;
+  targetLanguage: string;
 }
 
 export const defaultSettings: AppSettings = {
   showTips: false,    // Training mode disabled by default
   showEmojis: false,  // Emojis disabled by default for professional appearance
-  theme: 'system'     // Follow system preference
+  theme: 'system',    // Follow system preference
+  sourceLanguage: defaultSourceLanguage,  // English by default
+  targetLanguage: defaultTargetLanguage   // Spanish by default
 };
 
 /**

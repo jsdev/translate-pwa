@@ -7,6 +7,8 @@ interface AppStore extends AppSettings {
   toggleTips: () => void;
   toggleEmojis: () => void;
   setTheme: (theme: Theme) => void;
+  setSourceLanguage: (language: string) => void;
+  setTargetLanguage: (language: string) => void;
   resetDismissedTips: () => void;
   resetToDefaults: () => void;
 }
@@ -62,6 +64,18 @@ export const useAppStore = create<AppStore>((set, get) => {
       set(newSettings);
       saveSettings(newSettings);
       applyTheme(theme);
+    },
+    
+    setSourceLanguage: (sourceLanguage) => {
+      const newSettings = { ...get(), sourceLanguage };
+      set(newSettings);
+      saveSettings(newSettings);
+    },
+    
+    setTargetLanguage: (targetLanguage) => {
+      const newSettings = { ...get(), targetLanguage };
+      set(newSettings);
+      saveSettings(newSettings);
     },
     
     resetDismissedTips: () => {

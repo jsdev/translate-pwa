@@ -290,78 +290,6 @@ export const phrases: Phrase[] = [
     zh: "您需要食物吗？",
     ar: "هل تحتاج إلى طعام؟",
     category: "basic needs" 
-  },
-
-  // Intake
-  { 
-    en: "Do you have any identification?", 
-    es: "¿Tiene alguna identificación?", 
-    zh: "您有身份证件吗？",
-    ar: "هل لديك أي هوية؟",
-    category: "intake" 
-  },
-  { 
-    en: "What is your name?", 
-    es: "¿Cuál es su nombre?", 
-    zh: "您叫什么名字？",
-    ar: "ما اسمك؟",
-    category: "intake" 
-  },
-  { 
-    en: "Where are you from?", 
-    es: "¿De dónde es usted?", 
-    zh: "您来自哪里？",
-    ar: "من أين أنت؟",
-    category: "intake" 
-  },
-  { 
-    en: "What country are you from?", 
-    es: "¿De qué país es usted?", 
-    zh: "您来自哪个国家？",
-    ar: "من أي بلد أنت؟",
-    category: "intake" 
-  },
-  { 
-    en: "Please spell your name", 
-    es: "Por favor deletree su nombre", 
-    zh: "请拼写您的名字",
-    ar: "من فضلك تهج اسمك",
-    category: "intake" 
-  },
-  { 
-    en: "Do you have a passport?", 
-    es: "¿Tiene pasaporte?", 
-    zh: "您有护照吗？",
-    ar: "هل لديك جواز سفر؟",
-    category: "intake" 
-  },
-  { 
-    en: "What is your passport number?", 
-    es: "¿Cuál es su número de pasaporte?", 
-    zh: "您的护照号码是什么？",
-    ar: "ما رقم جواز سفرك؟",
-    category: "intake" 
-  },
-  { 
-    en: "When did you arrive?", 
-    es: "¿Cuándo llegó?", 
-    zh: "您什么时候到达的？",
-    ar: "متى وصلت؟",
-    category: "intake" 
-  },
-  { 
-    en: "How did you get here?", 
-    es: "¿Cómo llegó aquí?", 
-    zh: "您是怎么到这里的？",
-    ar: "كيف وصلت إلى هنا؟",
-    category: "intake" 
-  },
-  { 
-    en: "Are you traveling alone?", 
-    es: "¿Está viajando solo?", 
-    zh: "您是一个人旅行吗？",
-    ar: "هل تسافر وحدك؟",
-    category: "intake" 
   }
 ];
 
@@ -371,9 +299,5 @@ export const categories = [
   'reassurance',
   'communication',
   'instructions',
-  'basic needs',
-  'intake'
+  'basic needs'
 ];
-
-// Filter for intake-specific phrases
-export const intakePhrases: Phrase[] = phrases.filter(phrase => phrase.category === 'intake');

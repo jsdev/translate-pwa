@@ -8,13 +8,14 @@ import { useAppStore } from '../store/appStore';
 import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../components/SearchBar';
 import { TipsPanel } from '../components/TipsPanel';
+import { getLanguageName } from '../config/languages';
 
 export const QuickPhrasesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { speak } = useTextToSpeech();
   const { setTranslation } = useTranslationStore();
   const { addConversation } = useConversationStore();
-  const { showEmojis } = useAppStore();
+  const { showEmojis, sourceLanguage, targetLanguage } = useAppStore();
   const navigate = useNavigate();
   const phrasesRef = useRef<HTMLDivElement>(null);
 
@@ -23,8 +24,10 @@ export const QuickPhrasesPage = () => {
     
     const categoryPhrases = phrases.filter(phrase => phrase.category === category);
     return categoryPhrases.some(phrase => 
-      phrase.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      phrase.es.toLowerCase().includes(searchTerm.toLowerCase())
+      Object.values(phrase).some(text => 
+        typeof text === 'string' && 
+        text.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
   });
 
@@ -32,10 +35,16 @@ export const QuickPhrasesPage = () => {
     return phrases.filter(phrase => {
       const matchesCategory = phrase.category === category;
       const matchesSearch = searchTerm === '' || 
-                           phrase.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           phrase.es.toLowerCase().includes(searchTerm.toLowerCase());
+                           Object.values(phrase).some(text => 
+                             typeof text === 'string' && 
+                             text.toLowerCase().includes(searchTerm.toLowerCase())
+                           );
       return matchesCategory && matchesSearch;
     });
+  };
+
+  const getPhraseText = (phrase: Phrase, langCode: string): string => {
+    return phrase[langCode as keyof Phrase] as string || phrase.en;
   };
 
   const handleScrollToPhrases = () => {
@@ -48,11 +57,14 @@ export const QuickPhrasesPage = () => {
   };
 
   const handlePhraseSelect = (phrase: Phrase) => {
+    const sourceText = getPhraseText(phrase, sourceLanguage);
+    const targetText = getPhraseText(phrase, targetLanguage);
+    
     const translation = {
-      originalText: phrase.en,
-      translatedText: phrase.es,
-      originalLang: 'en' as const,
-      targetLang: 'es' as const
+      originalText: sourceText,
+      translatedText: targetText,
+      originalLang: sourceLanguage,
+      targetLang: targetLanguage
     };
     
     setTranslation(translation);
@@ -72,11 +84,14 @@ export const QuickPhrasesPage = () => {
     speak(text, lang);
     
     // Add to conversation history when audio is played with officer speaker
+    const sourceText = getPhraseText(phrase, sourceLanguage);
+    const targetText = getPhraseText(phrase, targetLanguage);
+    
     const translation = {
-      originalText: phrase.en,
-      translatedText: phrase.es,
-      originalLang: 'en' as const,
-      targetLang: 'es' as const
+      originalText: sourceText,
+      translatedText: targetText,
+      originalLang: sourceLanguage,
+      targetLang: targetLanguage
     };
     
     addConversation({
@@ -168,31 +183,31 @@ export const QuickPhrasesPage = () => {
                           }
                         }}
                       >
-                        {/* English */}
+                        {/* Source Language */}
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex-1">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">English</div>
-                            <div className="font-medium text-gray-900 dark:text-white">{phrase.en}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{getLanguageName(sourceLanguage)}</div>
+                            <div className="font-medium text-gray-900 dark:text-white">{getPhraseText(phrase, sourceLanguage)}</div>
                           </div>
                           <button
-                            onClick={(e) => handlePlayAudio(phrase.en, 'en', phrase, e)}
+                            onClick={(e) => handlePlayAudio(getPhraseText(phrase, sourceLanguage), sourceLanguage, phrase, e)}
                             className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                            title="Play English audio"
+                            title={`Play ${getLanguageName(sourceLanguage)} audio`}
                           >
                             <Volume2 className="w-4 h-4" />
                           </button>
                         </div>
 
-                        {/* Spanish */}
+                        {/* Target Language */}
                         <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-600 pt-2">
                           <div className="flex-1">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Español</div>
-                            <div className="font-medium text-gray-900 dark:text-white">{phrase.es}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{getLanguageName(targetLanguage)}</div>
+                            <div className="font-medium text-gray-900 dark:text-white">{getPhraseText(phrase, targetLanguage)}</div>
                           </div>
                           <button
-                            onClick={(e) => handlePlayAudio(phrase.es, 'es', phrase, e)}
+                            onClick={(e) => handlePlayAudio(getPhraseText(phrase, targetLanguage), targetLanguage, phrase, e)}
                             className="p-2 text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                            title="Play Spanish audio"
+                            title={`Play ${getLanguageName(targetLanguage)} audio`}
                           >
                             <Volume2 className="w-4 h-4" />
                           </button>
