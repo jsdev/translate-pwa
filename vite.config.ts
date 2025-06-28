@@ -28,52 +28,6 @@ function getDevelopmentHeaders() {
   };
 }
 
-function getProductionHeaders() {
-  return {
-    // Strict security headers for production
-    'X-Frame-Options': 'DENY',
-    'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    
-    // HSTS for HTTPS enforcement
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-    
-    // Cross-Origin policies for isolation
-    'Cross-Origin-Opener-Policy': 'same-origin',
-    'Cross-Origin-Embedder-Policy': 'require-corp',
-    'Cross-Origin-Resource-Policy': 'same-origin',
-    
-    // Permissions Policy to restrict dangerous features
-    'Permissions-Policy': [
-      'camera=()',
-      'microphone=()',
-      'geolocation=()',
-      'payment=()',
-      'usb=()',
-      'magnetometer=()',
-      'gyroscope=()',
-      'accelerometer=()',
-      'fullscreen=(self)',
-      'display-capture=()'
-    ].join(', '),
-    
-    // Strict CSP for production
-    'Content-Security-Policy': [
-      "default-src 'self'",
-      "script-src 'self'",
-      "style-src 'self' 'unsafe-inline'", // Allow inline styles for Tailwind
-      "img-src 'self' data: blob:",
-      "font-src 'self' data:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-      "worker-src 'self'"
-    ].join('; ')
-  };
-}
-
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   const isDev = command === 'serve';
