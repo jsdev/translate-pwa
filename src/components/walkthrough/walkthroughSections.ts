@@ -12,6 +12,7 @@ import { ConsistencySection } from './sections/ConsistencySection';
 import { ModularArchitectureSection } from './sections/ModularArchitectureSection';
 import { TechnicalSection } from './sections/TechnicalSection';
 import { AuditComplianceSection } from './sections/AuditComplianceSection';
+import { LighthousePerformanceSection } from './sections/LighthousePerformanceSection';
 
 export const walkthroughSections: WalkthroughSection[] = [
   {
@@ -85,6 +86,12 @@ export const walkthroughSections: WalkthroughSection[] = [
     title: 'Technical Excellence',
     subtitle: 'Modern Web Standards & Performance',
     content: TechnicalSection({})
+  },
+  {
+    id: 'lighthouse-performance',
+    title: 'Lighthouse Performance Monitoring',
+    subtitle: 'Continuous Quality Assurance & Government Compliance',
+    content: LighthousePerformanceSection()
   },
   {
     id: 'audit-compliance',

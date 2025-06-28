@@ -1,0 +1,244 @@
+name: Lighthouse Performance Monitoring
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  lighthouse-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Run Lighthouse CI (Informational)
+        run: |
+          echo "🚨 Running Lighthouse audit for informational purposes..."
+          lhci autorun --config=./lighthouserc.cjs || echo "⚠️ Lighthouse audit completed with issues - check results below"
+        continue-on-error: true
+
+      - name: Extract Lighthouse Scores
+        id: lighthouse-scores
+        run: |
+          # Find the latest lighthouse results
+          RESULTS_FILE=$(find lighthouse-results -name "*.json" | head -1)
+          
+          if [ -f "$RESULTS_FILE" ]; then
+            echo "📊 Extracting scores from: $RESULTS_FILE"
+            
+            # Extract scores using Node.js
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+              const scores = results.categories;
+              
+              const performance = Math.round((scores.performance?.score || 0) * 100);
+              const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
+              const bestPractices = Math.round((scores['best-practices']?.score || 0) * 100);
+              const seo = Math.round((scores.seo?.score || 0) * 100);
+              const pwa = Math.round((scores.pwa?.score || 0) * 100);
+              
+              console.log('PERFORMANCE=' + performance);
+              console.log('ACCESSIBILITY=' + accessibility);
+              console.log('BEST_PRACTICES=' + bestPractices);
+              console.log('SEO=' + seo);
+              console.log('PWA=' + pwa);
+              
+              // Save to GitHub outputs
+              const output = [
+                'performance=' + performance,
+                'accessibility=' + accessibility,
+                'best_practices=' + bestPractices,
+                'seo=' + seo,
+                'pwa=' + pwa
+              ].join('\n');
+              
+              console.log('Writing to GITHUB_OUTPUT:', output);
+            " >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ No Lighthouse results found"
+            echo "performance=0" >> $GITHUB_OUTPUT
+            echo "accessibility=0" >> $GITHUB_OUTPUT
+            echo "best_practices=0" >> $GITHUB_OUTPUT
+            echo "seo=0" >> $GITHUB_OUTPUT
+            echo "pwa=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment PR with Lighthouse Scores
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const performance = '${{ steps.lighthouse-scores.outputs.performance }}';
+            const accessibility = '${{ steps.lighthouse-scores.outputs.accessibility }}';
+            const bestPractices = '${{ steps.lighthouse-scores.outputs.best_practices }}';
+            const seo = '${{ steps.lighthouse-scores.outputs.seo }}';
+            const pwa = '${{ steps.lighthouse-scores.outputs.pwa }}';
+            
+            // Score emoji helper
+            const getScoreEmoji = (score) => {
+              if (score >= 90) return '🟢';
+              if (score >= 70) return '🟡';
+              return '🔴';
+            };
+            
+            // Score color helper  
+            const getScoreColor = (score) => {
+              if (score >= 90) return 'success';
+              if (score >= 70) return 'warning';
+              return 'critical';
+            };
+            
+            const comment = \`## 🚨 Lighthouse Performance Report
+            
+            📊 **Lighthouse Scores for this PR:**
+            
+            | Category | Score | Status |
+            |----------|-------|--------|
+            | ${getScoreEmoji(performance)} **Performance** | ${performance}/100 | ${performance >= 95 ? '✅ Excellent' : performance >= 90 ? '⚠️ Good' : '❌ Needs Improvement'} |
+            | ${getScoreEmoji(accessibility)} **Accessibility** | ${accessibility}/100 | ${accessibility >= 100 ? '✅ Perfect' : accessibility >= 95 ? '⚠️ Good' : '❌ Needs Improvement'} |
+            | ${getScoreEmoji(bestPractices)} **Best Practices** | ${bestPractices}/100 | ${bestPractices >= 100 ? '✅ Perfect' : bestPractices >= 95 ? '⚠️ Good' : '❌ Needs Improvement'} |
+            | ${getScoreEmoji(seo)} **SEO** | ${seo}/100 | ${seo >= 100 ? '✅ Perfect' : seo >= 95 ? '⚠️ Good' : '❌ Needs Improvement'} |
+            | ${getScoreEmoji(pwa)} **PWA** | ${pwa}/100 | ${pwa >= 90 ? '✅ Excellent' : pwa >= 80 ? '⚠️ Good' : '❌ Needs Improvement'} |
+            
+            ### 🎯 **Government Compliance Status:**
+            - **Section 508**: ${accessibility >= 100 ? '✅ Compliant' : '❌ Non-Compliant'}
+            - **WCAG 2.1 AA**: ${accessibility >= 100 ? '✅ Compliant' : '❌ Non-Compliant'}
+            - **Security Headers**: ${bestPractices >= 95 ? '✅ Secure' : '⚠️ Review Needed'}
+            
+            ${performance < 95 || accessibility < 100 || bestPractices < 95 || seo < 95 ? 
+              \`### ⚠️ **Recommendations:**
+              ${performance < 95 ? '- 🚀 **Performance**: Consider optimizing images, reducing bundle size, or improving loading speed\\n' : ''}
+              ${accessibility < 100 ? '- ♿ **Accessibility**: Review color contrast, ARIA labels, and keyboard navigation\\n' : ''}
+              ${bestPractices < 95 ? '- 🛡️ **Security**: Check CSP headers, HTTPS configuration, and third-party libraries\\n' : ''}
+              ${seo < 95 ? '- 🔍 **SEO**: Improve meta tags, structured data, or page titles\\n' : ''}
+              \` : 
+              '### 🎉 **Excellent work!** All scores meet or exceed government standards.'
+            }
+            
+            <details>
+            <summary>📈 View Detailed Results</summary>
+            
+            Full Lighthouse report available in workflow artifacts.
+            
+            **Testing Environment:**
+            - Build: Preview server (localhost:4173)
+            - Device: Desktop simulation
+            - Network: Simulated fast 3G
+            
+            </details>
+            
+            ---
+            *This is an automated Lighthouse audit. Scores may vary between local and production environments.*
+            \`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Upload Lighthouse Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results-pr-${{ github.event.number }}
+          path: lighthouse-results/
+          retention-days: 30
+
+  lighthouse-push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Run Lighthouse CI (Push)
+        run: |
+          echo "🚨 Running Lighthouse audit on push to ${{ github.ref_name }}..."
+          lhci autorun --config=./lighthouserc.cjs || echo "⚠️ Lighthouse audit completed - check results"
+        continue-on-error: true
+
+      - name: Generate Performance Summary
+        run: |
+          echo "## 📊 Lighthouse Performance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Find and parse latest results
+          RESULTS_FILE=$(find lighthouse-results -name "*.json" | head -1)
+          
+          if [ -f "$RESULTS_FILE" ]; then
+            echo "📈 **Lighthouse Scores:**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('$RESULTS_FILE', 'utf8'));
+              const scores = results.categories;
+              
+              const performance = Math.round((scores.performance?.score || 0) * 100);
+              const accessibility = Math.round((scores.accessibility?.score || 0) * 100);
+              const bestPractices = Math.round((scores['best-practices']?.score || 0) * 100);
+              const seo = Math.round((scores.seo?.score || 0) * 100);
+              const pwa = Math.round((scores.pwa?.score || 0) * 100);
+              
+              const getEmoji = (score) => score >= 90 ? '🟢' : score >= 70 ? '🟡' : '🔴';
+              
+              console.log('| Category | Score | Status |');
+              console.log('|----------|-------|--------|');
+              console.log(\`| \${getEmoji(performance)} Performance | \${performance}/100 | \${performance >= 95 ? 'Excellent' : 'Good'} |\`);
+              console.log(\`| \${getEmoji(accessibility)} Accessibility | \${accessibility}/100 | \${accessibility >= 100 ? 'Perfect' : 'Good'} |\`);
+              console.log(\`| \${getEmoji(bestPractices)} Best Practices | \${bestPractices}/100 | \${bestPractices >= 95 ? 'Excellent' : 'Good'} |\`);
+              console.log(\`| \${getEmoji(seo)} SEO | \${seo}/100 | \${seo >= 95 ? 'Excellent' : 'Good'} |\`);
+              console.log(\`| \${getEmoji(pwa)} PWA | \${pwa}/100 | \${pwa >= 80 ? 'Good' : 'Needs Work'} |\`);
+            " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No results found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Lighthouse Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results-${{ github.ref_name }}-${{ github.sha }}
+          path: lighthouse-results/
+          retention-days: 30

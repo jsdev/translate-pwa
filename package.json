@@ -14,11 +14,14 @@
     "lighthouse:ci": "lhci autorun --config=./lighthouserc.cjs",
     "lighthouse:routes": "node scripts/lighthouse-routes.mjs",
     "lighthouse:test": "node scripts/test-lighthouse.mjs",
+    "lighthouse:report": "node scripts/lighthouse-report.mjs",
+    "lighthouse:badges": "node scripts/lighthouse-badges.mjs",
     "lighthouse:open": "npm run build && lhci autorun --config=./lighthouserc.cjs && open ./lighthouse-results/index.html",
-    "accessibility:test": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test.mjs; pkill -f 'spa-server.py' || true",
+    "accessibility:test": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test-robust.mjs; pkill -f 'spa-server.py' || true",
     "accessibility:report": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-report.mjs; pkill -f 'spa-server.py' || true",
     "accessibility:html": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-html-report.mjs; pkill -f 'spa-server.py' || true",
-    "accessibility:ci": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test.mjs; pkill -f 'spa-server.py' || true"
+    "accessibility:ci": "npm run build && (cd dist && python3 ../scripts/spa-server.py 8080 &) && sleep 5 && node scripts/accessibility-test-robust.mjs; pkill -f 'spa-server.py' || true",
+    "fix:chromedriver": "bash scripts/fix-chromedriver.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
