@@ -1,6 +1,79 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// Security headers for different environments
+function getDevelopmentHeaders() {
+  return {
+    // CORS headers for development tools
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    
+    // Basic security headers (lenient for dev tools)
+    'X-Frame-Options': 'SAMEORIGIN', // Allow embedding for dev tools
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    
+    // Development-friendly CSP (allows inline styles, eval for HMR)
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Allow eval for HMR
+      "style-src 'self' 'unsafe-inline'", // Allow inline styles for dev
+      "img-src 'self' data: blob:",
+      "font-src 'self' data:",
+      "connect-src 'self' ws: wss: http: https:", // Allow WebSocket for HMR
+      "frame-ancestors 'self'", // Allow self-framing for dev tools
+      "worker-src 'self' blob:" // Allow workers
+    ].join('; ')
+  };
+}
+
+function getProductionHeaders() {
+  return {
+    // Strict security headers for production
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    
+    // HSTS for HTTPS enforcement
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    
+    // Cross-Origin policies for isolation
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    
+    // Permissions Policy to restrict dangerous features
+    'Permissions-Policy': [
+      'camera=()',
+      'microphone=()',
+      'geolocation=()',
+      'payment=()',
+      'usb=()',
+      'magnetometer=()',
+      'gyroscope=()',
+      'accelerometer=()',
+      'fullscreen=(self)',
+      'display-capture=()'
+    ].join(', '),
+    
+    // Strict CSP for production
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self'",
+      "style-src 'self' 'unsafe-inline'", // Allow inline styles for Tailwind
+      "img-src 'self' data: blob:",
+      "font-src 'self' data:",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "worker-src 'self'"
+    ].join('; ')
+  };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   const isDev = command === 'serve';
@@ -69,18 +142,8 @@ export default defineConfig(({ command }) => {
       hmr: {
         port: 5173
       },
-      // CORS and security headers for development
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'X-Frame-Options': 'DENY',
-        'X-Content-Type-Options': 'nosniff',
-        // Less restrictive CSP for development
-        'Content-Security-Policy': isDev 
-          ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ws: wss:;"
-          : "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;"
-      }
+      // Development-friendly security headers
+      headers: getDevelopmentHeaders()
     },
     // Vite 7.0.0 specific configuration
     define: {
