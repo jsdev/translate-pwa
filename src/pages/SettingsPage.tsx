@@ -63,12 +63,12 @@ export const SettingsPage: React.FC = () => {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto prevent-bounce">
-        <div className="p-4 space-y-6">
+        <div className="space-y-0">
           {/* Theme Selection */}
-          <section>
+          <section className="border-b border-gray-200 dark:border-gray-700">
             <fieldset>
-              <legend className="text-lg font-medium text-gray-900 dark:text-white mb-4">Appearance</legend>
-              <div className="space-y-3" role="radiogroup" aria-labelledby="theme-selection">
+              <legend className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Appearance</legend>
+              <div className="divide-y divide-gray-200 dark:divide-gray-700" role="radiogroup" aria-labelledby="theme-selection">
                 {themeOptions.map((option) => {
                   const Icon = option.icon;
                   const inputId = `theme-${option.value}`;
@@ -85,7 +85,7 @@ export const SettingsPage: React.FC = () => {
                       />
                       <label
                         htmlFor={inputId}
-                        className={`w-full flex items-center gap-4 p-4 rounded-lg border transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 ${
+                        className={`w-full flex items-center gap-4 p-4 border transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 ${
                           theme === option.value
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
@@ -108,12 +108,12 @@ export const SettingsPage: React.FC = () => {
           </section>
 
           {/* Interface Options */}
-          <section>
+          <section className="border-b border-gray-200 dark:border-gray-700">
             <fieldset>
-              <legend className="text-lg font-medium text-gray-900 dark:text-white mb-4">Interface</legend>
-              <div className="space-y-3">
+              <legend className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Interface</legend>
+              <div className="space-y-0">
                 {/* Emoji Setting */}
-                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                   <div className="flex items-center gap-3">
                     <Smile className="w-5 h-5 text-yellow-500" aria-hidden="true" />
                     <div>
@@ -152,11 +152,11 @@ export const SettingsPage: React.FC = () => {
           </section>
 
           {/* Officer Training Mode */}
-          <section>
+          <section className="border-b border-gray-200 dark:border-gray-700">
             <fieldset>
-              <legend className="text-lg font-medium text-gray-900 dark:text-white mb-4">Training</legend>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <legend className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Training</legend>
+              <div className="space-y-0">
+                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3">
                     <Info className="w-5 h-5 text-blue-500" aria-hidden="true" />
                     <div>
@@ -192,22 +192,24 @@ export const SettingsPage: React.FC = () => {
                 </div>
 
                 {showTips && (
-                  <button
-                    onClick={resetDismissedTips}
-                    className="w-full p-4 text-left bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                  >
-                    <div className="font-medium text-blue-700 dark:text-blue-300">Reset Dismissed Tips</div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">Show all tips that were previously dismissed</div>
-                  </button>
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+                    <button
+                      onClick={resetDismissedTips}
+                      className="w-full text-left hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    >
+                      <div className="font-medium text-blue-700 dark:text-blue-300">Reset Dismissed Tips</div>
+                      <div className="text-sm text-blue-600 dark:text-blue-400">Show all tips that were previously dismissed</div>
+                    </button>
+                  </div>
                 )}
               </div>
             </fieldset>
           </section>
 
           {/* Default Settings Info */}
-          <section>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Default Configuration</h3>
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <section className="border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Default Configuration</h3>
+            <div className="p-4 bg-gray-50 dark:bg-gray-800">
               <div className="text-gray-600 dark:text-gray-400 space-y-2 text-sm">
                 <div><strong className="text-gray-900 dark:text-white">Professional Mode:</strong> Tips and emojis disabled by default</div>
                 <div><strong className="text-gray-900 dark:text-white">System Theme:</strong> Automatically follows device preference</div>
@@ -221,8 +223,8 @@ export const SettingsPage: React.FC = () => {
 
           {/* App Information */}
           <section>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">About</h3>
-            <div className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">About</h3>
+            <div className="p-4 bg-white dark:bg-gray-800">
               <div className="text-gray-600 dark:text-gray-400 space-y-2">
                 <div><strong className="text-gray-900 dark:text-white">ICE/CBP Translation Tool</strong></div>
                 <div>Version 1.0.0</div>

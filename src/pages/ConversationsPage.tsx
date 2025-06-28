@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Volume2, Calendar, Clock, User, UserCheck } from 'lucide-react';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useConversationStore } from '../store/conversationStore';
@@ -111,7 +111,7 @@ export const ConversationsPage = () => {
         </div>
 
         {/* Date Filter */}
-        <div className="flex gap-2 overflow-x-auto pb-2 prevent-bounce">
+        <div className="flex gap-1 overflow-x-auto pb-2 prevent-bounce">
           {[
             { value: 'all', label: 'All' },
             { value: 'today', label: 'Today' },
@@ -121,7 +121,7 @@ export const ConversationsPage = () => {
             <button
               key={filter.value}
               onClick={() => setFilterDate(filter.value)}
-              className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+              className={`px-3 py-1 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                 filterDate === filter.value
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -151,11 +151,11 @@ export const ConversationsPage = () => {
             </p>
           </div>
         ) : (
-          <div ref={conversationsRef} className="p-4 space-y-3">
+          <div ref={conversationsRef} className="divide-y divide-gray-200 dark:divide-gray-700">
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
-                className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
@@ -186,13 +186,13 @@ export const ConversationsPage = () => {
                     </div>
                     <button
                       onClick={() => handlePlayAudio(conversation.originalText, conversation.originalLang)}
-                      className="p-1 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="p-1 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       title="Play original audio"
                     >
                       <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-gray-50 dark:bg-gray-700 p-2">
                     {conversation.originalText}
                   </div>
                 </div>
@@ -205,13 +205,13 @@ export const ConversationsPage = () => {
                     </div>
                     <button
                       onClick={() => handlePlayAudio(conversation.translatedText, conversation.targetLang)}
-                      className="p-1 text-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                      className="p-1 text-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
                       title="Play translated audio"
                     >
                       <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-green-50 dark:bg-green-900/20 p-2 rounded">
+                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-green-50 dark:bg-green-900/20 p-2">
                     {conversation.translatedText}
                   </div>
                 </div>

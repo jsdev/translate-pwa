@@ -154,12 +154,12 @@ export const QuickPhrasesPage = () => {
                 </summary>
                 
                 <div className="border-t border-gray-100 dark:border-gray-700">
-                  <div className="p-4 space-y-3">
+                  <div className="divide-y divide-gray-100 dark:divide-gray-700">
                     {categoryPhrases.map((phrase, index) => (
                       <div
                         key={index}
                         onClick={() => handlePhraseSelect(phrase)}
-                        className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 active:bg-blue-50 dark:active:bg-blue-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="p-4 bg-white dark:bg-gray-800 active:bg-blue-50 dark:active:bg-blue-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                         tabIndex={0}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
@@ -176,7 +176,7 @@ export const QuickPhrasesPage = () => {
                           </div>
                           <button
                             onClick={(e) => handlePlayAudio(phrase.en, 'en', phrase, e)}
-                            className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                            className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                             title="Play English audio"
                           >
                             <Volume2 className="w-4 h-4" />
@@ -184,14 +184,14 @@ export const QuickPhrasesPage = () => {
                         </div>
 
                         {/* Spanish */}
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-600 pt-2">
                           <div className="flex-1">
                             <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Español</div>
                             <div className="font-medium text-gray-900 dark:text-white">{phrase.es}</div>
                           </div>
                           <button
                             onClick={(e) => handlePlayAudio(phrase.es, 'es', phrase, e)}
-                            className="p-2 text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                            className="p-2 text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
                             title="Play Spanish audio"
                           >
                             <Volume2 className="w-4 h-4" />
