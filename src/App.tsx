@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { MobileHeader } from './components/MobileHeader';
 import { MobileNav } from './components/MobileNav';
@@ -71,7 +71,9 @@ const MobileApp = () => {
 
 function App() {
   // Set basename for GitHub Pages deployment
-  const basename = import.meta.env.VITE_BASE_URL || '/';
+  // Use import.meta.env.BASE_URL which is automatically set by Vite
+  // Remove trailing slash for React Router basename
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
   
   return (
     <Router basename={basename}>
