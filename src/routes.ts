@@ -8,7 +8,6 @@ export const appRoutes = [
   '/intake',
   '/phrases',
   '/record',
-  '/translate',
   '/conversations',
   '/settings',
   '/voice-diagnostics',

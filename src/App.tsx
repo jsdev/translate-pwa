@@ -55,7 +55,6 @@ const MobileApp = () => {
           <Route path="/intake" element={<IntakePage />} />
           <Route path="/phrases" element={<QuickPhrasesPage />} />
           <Route path="/record" element={<RecordPage />} />
-          <Route path="/translate" element={<TranslationPage />} />
           <Route path="/conversations" element={<ConversationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/voice-diagnostics" element={<VoiceDiagnosticsPage />} />

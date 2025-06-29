@@ -64,29 +64,6 @@ export const IntakePage = () => {
     }
   };
 
-  const handlePhraseSelect = (phrase: Phrase) => {
-    const sourceText = getPhraseText(phrase, sourceLanguage);
-    const targetText = getPhraseText(phrase, targetLanguage);
-    
-    const translation = {
-      originalText: sourceText,
-      translatedText: targetText,
-      originalLang: sourceLanguage,
-      targetLang: targetLanguage
-    };
-    
-    setTranslation(translation);
-    
-    // Add to conversation history with officer speaker
-    addConversation({
-      ...translation,
-      source: 'phrase',
-      speaker: 'officer'
-    });
-    
-    navigate('/translate');
-  };
-
   const handlePlayAudio = (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => {
     e.stopPropagation();
     speak(text, lang);
@@ -158,7 +135,6 @@ export const IntakePage = () => {
           ref={additionalPhrasesRef}
           searchTerm={searchTerm}
           filteredPhrases={filteredPhrases}
-          onPhraseSelect={handlePhraseSelect}
           onPlayAudio={handlePlayAudio}
         />
       </div>

@@ -7,12 +7,11 @@ import { getLanguageName } from '../../config/languages';
 interface AdditionalPhrasesSectionProps {
   searchTerm: string;
   filteredPhrases: Phrase[];
-  onPhraseSelect: (phrase: Phrase) => void;
   onPlayAudio: (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => void;
 }
 
 export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, AdditionalPhrasesSectionProps>(
-  ({ searchTerm, filteredPhrases, onPhraseSelect, onPlayAudio }, ref) => {
+  ({ searchTerm, filteredPhrases, onPlayAudio }, ref) => {
     const { sourceLanguage, targetLanguage } = useAppStore();
     
     // Helper function to get phrase text in the specified language
@@ -53,15 +52,9 @@ export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, Additiona
               {filteredPhrases.map((phrase, index) => (
                 <div
                   key={index}
-                  onClick={() => onPhraseSelect(phrase)}
+                  onClick={() => e.currentTarget.querySelectorAll('button')[1]?.click()}
                   className="p-4 bg-white dark:bg-gray-800 active:bg-blue-50 dark:active:bg-blue-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onPhraseSelect(phrase);
-                    }
-                  }}
                 >
                   {/* Source Language */}
                   <div className="flex items-center justify-between mb-2">
