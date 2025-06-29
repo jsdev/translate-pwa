@@ -1,11 +1,13 @@
 import { Volume2, Mic, Copy } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useTranslationStore } from '../store/translationStore';
 import { getLanguageName } from '../config/languages';
 
 export const TranslationPage = () => {
   const { speak } = useTextToSpeech();
-  const { translation, clearTranslation } = useTranslationStore();
+  const { translation } = useTranslationStore();
+  const navigate = useNavigate();
 
   const handlePlayAudio = (text: string, lang: string) => {
     speak(text, lang);
@@ -42,11 +44,13 @@ export const TranslationPage = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Translation Result</h2>
           <div className="flex gap-2">
-            <a href='/record'
+            <button
+              onClick={() => navigate(-1)}
               className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+              title="Go back"
             >
               <Mic className="w-5 h-5" />
-            </a>
+            </button>
           </div>
         </div>
       </div>

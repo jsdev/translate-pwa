@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Phrase } from '../../data/phrases';
 import { useAppStore } from '../../store/appStore';
-import { PhraseCard } from '../../components/PhraseCard';
+import { PlayTranslationCard } from '../../components/PlayTranslationCard'; 
 
 interface AdditionalPhrasesSectionProps {
   searchTerm: string;
@@ -49,16 +49,19 @@ export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, Additiona
         <div className="border-t border-gray-100 dark:border-gray-700">
           {filteredPhrases.length > 0 ? (
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
-              {filteredPhrases.map((phrase, index) => (
-                <PhraseCard
-                  key={index}
-                  phrase={phrase}
-                  sourceLanguage={sourceLanguage}
-                  targetLanguage={targetLanguage}
-                  onPlayAudio={onPlayAudio}
-                  getPhraseText={getPhraseText}
-                />
-              ))}
+              {filteredPhrases.map((phrase, index) => {
+                const sourceText = getPhraseText(phrase, sourceLanguage);
+                const targetText = getPhraseText(phrase, targetLanguage);
+                
+                return (
+                  <PlayTranslationCard
+                    key={index}
+                    title={sourceText}
+                    subtitle={targetText}
+                    onPlay={() => onPlayAudio(targetText, targetLanguage, phrase, {} as React.MouseEvent)}
+                  />
+                );
+              })}
             </div>
           ) : searchTerm ? (
             <div className="p-4">

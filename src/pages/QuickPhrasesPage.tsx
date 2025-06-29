@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { phrases, categories, Phrase } from '../data/phrases';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
@@ -6,7 +6,7 @@ import { useConversationStore } from '../store/conversationStore';
 import { useAppStore } from '../store/appStore';
 import { SearchBar } from '../components/SearchBar';
 import { TipsPanel } from '../components/TipsPanel';
-import { PhraseCard } from '../components/PhraseCard';
+import { PlayTranslationCard } from '../components/PlayTranslationCard';
 
 export const QuickPhrasesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,8 +59,7 @@ export const QuickPhrasesPage = () => {
 
 
 
-  const handlePlayAudio = (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePlayAudio = (text: string, lang: string, phrase: Phrase) => {
     speak(text, lang);
     
     // Add to conversation history when audio is played with officer speaker
@@ -117,7 +116,8 @@ export const QuickPhrasesPage = () => {
             const isFirstCategory = categoryIndex === 0;
             
             return (
-              <details 
+              <details
+                name="quick-phrases-accordion"
                 key={category} 
                 className="group bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                 open={isFirstCategory || searchTerm !== ''}
@@ -138,16 +138,19 @@ export const QuickPhrasesPage = () => {
                 
                 <div className="border-t border-gray-100 dark:border-gray-700">
                   <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {categoryPhrases.map((phrase, index) => (
-                      <PhraseCard
-                        key={index}
-                        phrase={phrase}
-                        sourceLanguage={sourceLanguage}
-                        targetLanguage={targetLanguage}
-                        onPlayAudio={handlePlayAudio}
-                        getPhraseText={getPhraseText}
-                      />
-                    ))}
+                    {categoryPhrases.map((phrase, index) => {
+                      const sourceText = getPhraseText(phrase, sourceLanguage);
+                      const targetText = getPhraseText(phrase, targetLanguage);
+                      
+                      return (
+                        <PlayTranslationCard
+                          key={index}
+                          title={sourceText}
+                          subtitle={targetText}
+                          onPlay={() => handlePlayAudio(targetText, targetLanguage, phrase)}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </details>

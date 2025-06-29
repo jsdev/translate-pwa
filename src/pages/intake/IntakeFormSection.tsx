@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
-import { Volume2, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useIntakeStore } from '../../store/intakeStore';
 import { useConversationStore } from '../../store/conversationStore';
 import { useAppStore } from '../../store/appStore';
 import { Phrase } from '../../data/phrases';
+import { PlayTranslationCard } from '../../components/PlayTranslationCard';
 
 interface IntakeFormSectionProps {
   searchTerm: string;
@@ -49,8 +50,7 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
       return question[langCode] || question.en; // Fallback to English
     };
 
-    const handlePlayQuestion = (questionKey: keyof typeof intakeQuestions, e: React.MouseEvent) => {
-      e.stopPropagation();
+    const handlePlayQuestion = (questionKey: keyof typeof intakeQuestions) => {
       const englishText = getQuestionText(intakeQuestions[questionKey], sourceLanguage);
       const targetText = getQuestionText(intakeQuestions[questionKey], targetLanguage);
       
@@ -71,7 +71,7 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
         ar: intakeQuestions[questionKey].ar || intakeQuestions[questionKey].en,
         category: 'intake' 
       };
-      onPlayAudio(targetText, targetLanguage, mockPhrase, e);
+      onPlayAudio(targetText, targetLanguage, mockPhrase, {} as React.MouseEvent);
     };
 
     return (
@@ -101,25 +101,11 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
         <div className="border-t border-gray-100 dark:border-gray-700 p-4 space-y-4">
           {/* Identification Status Card */}
           <div className="border-b border-gray-200 dark:border-gray-600 last:border-b-0 pb-4 last:pb-0">
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                    {getQuestionText(intakeQuestions.identification, sourceLanguage)}
-                  </h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {getQuestionText(intakeQuestions.identification, targetLanguage)}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => handlePlayQuestion('identification', e)}
-                  className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title={`Play ${targetLanguage.toUpperCase()} audio`}
-                >
-                  <Volume2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            <PlayTranslationCard
+              title={getQuestionText(intakeQuestions.identification, sourceLanguage)}
+              subtitle={getQuestionText(intakeQuestions.identification, targetLanguage)}
+              onPlay={() => handlePlayQuestion('identification')}
+            />
             <div className="flex gap-3">
               <button
                 onClick={() => updateIntakeData({ hasIdentification: true })}
@@ -146,25 +132,11 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
 
           {/* Name Card */}
           <div className="border-b border-gray-200 dark:border-gray-600 last:border-b-0 pb-4 last:pb-0">
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                    {getQuestionText(intakeQuestions.name, sourceLanguage)}
-                  </h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {getQuestionText(intakeQuestions.name, targetLanguage)}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => handlePlayQuestion('name', e)}
-                  className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title={`Play ${targetLanguage.toUpperCase()} audio`}
-                >
-                  <Volume2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            <PlayTranslationCard
+              title={getQuestionText(intakeQuestions.name, sourceLanguage)}
+              subtitle={getQuestionText(intakeQuestions.name, targetLanguage)}
+              onPlay={() => handlePlayQuestion('name')}
+            />
             <input
               type="text"
               value={intakeData.name}
@@ -176,25 +148,11 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
 
           {/* Country Card */}
           <div className="border-b border-gray-200 dark:border-gray-600 last:border-b-0 pb-4 last:pb-0">
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                    {getQuestionText(intakeQuestions.country, sourceLanguage)}
-                  </h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {getQuestionText(intakeQuestions.country, targetLanguage)}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => handlePlayQuestion('country', e)}
-                  className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title={`Play ${targetLanguage.toUpperCase()} audio`}
-                >
-                  <Volume2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+              <PlayTranslationCard
+                title={getQuestionText(intakeQuestions.country, sourceLanguage)}
+                subtitle={getQuestionText(intakeQuestions.country, targetLanguage)}
+                onPlay={() => handlePlayQuestion('country')}
+              />
             <input
               type="text"
               value={intakeData.country}
@@ -207,25 +165,11 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
           {/* Passport Number Card (conditional) */}
           {intakeData.hasIdentification === true && (
             <div className="border-b border-gray-200 dark:border-gray-600 last:border-b-0 pb-4 last:pb-0">
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                      {getQuestionText(intakeQuestions.passport, sourceLanguage)}
-                    </h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      {getQuestionText(intakeQuestions.passport, targetLanguage)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={(e) => handlePlayQuestion('passport', e)}
-                    className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                    title={`Play ${targetLanguage.toUpperCase()} audio`}
-                  >
-                    <Volume2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+                <PlayTranslationCard
+                  title={getQuestionText(intakeQuestions.passport, sourceLanguage)}
+                  subtitle={getQuestionText(intakeQuestions.passport, targetLanguage)}
+                  onPlay={() => handlePlayQuestion('passport')}
+                />
               <input
                 type="text"
                 value={intakeData.passportNumber}
