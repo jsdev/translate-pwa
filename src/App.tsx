@@ -63,11 +63,7 @@ const MobileApp = () => {
           <Route path="*" element={<Navigate to="/intake" replace />} />
         </Routes>
       </main>
-      <Routes>
-        <Route path="/settings" element={null} />
-        <Route path="/voice-diagnostics" element={null} />
-        <Route path="*" element={<MobileNav />} />
-      </Routes>
+      <MobileNav />
     </div>
   );
 };
