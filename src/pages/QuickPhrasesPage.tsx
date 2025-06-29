@@ -2,10 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Volume2, ChevronDown } from 'lucide-react';
 import { phrases, categories, Phrase } from '../data/phrases';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
-import { useTranslationStore } from '../store/translationStore';
 import { useConversationStore } from '../store/conversationStore';
 import { useAppStore } from '../store/appStore';
-import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../components/SearchBar';
 import { TipsPanel } from '../components/TipsPanel';
 import { getLanguageName } from '../config/languages';
@@ -13,16 +11,14 @@ import { getLanguageName } from '../config/languages';
 export const QuickPhrasesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { speak } = useTextToSpeech();
-  const { setTranslation } = useTranslationStore();
   const { addConversation } = useConversationStore();
-  const { showEmojis, sourceLanguage, targetLanguage } = useAppStore();
-  const navigate = useNavigate();
+  const { sourceLanguage, targetLanguage } = useAppStore();
   const phrasesRef = useRef<HTMLDivElement>(null);
 
-  // Debug: Log current language settings
-  console.log('QuickPhrasesPage - Current languages:', { sourceLanguage, targetLanguage });
-
   const filteredCategories = categories.filter(category => {
+    // Hide intake category since it's already in IntakePage
+    if (category === 'intake') return false;
+    
     if (searchTerm === '') return true;
     
     const categoryPhrases = phrases.filter(phrase => phrase.category === category);
@@ -61,28 +57,7 @@ export const QuickPhrasesPage = () => {
     }
   };
 
-  const handlePhraseSelect = (phrase: Phrase) => {
-    const sourceText = getPhraseText(phrase, sourceLanguage);
-    const targetText = getPhraseText(phrase, targetLanguage);
-    
-    const translation = {
-      originalText: sourceText,
-      translatedText: targetText,
-      originalLang: sourceLanguage,
-      targetLang: targetLanguage
-    };
-    
-    setTranslation(translation);
-    
-    // Add to conversation history with officer speaker
-    addConversation({
-      ...translation,
-      source: 'phrase',
-      speaker: 'officer'
-    });
-    
-    navigate('/translate');
-  };
+
 
   const handlePlayAudio = (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -118,28 +93,12 @@ export const QuickPhrasesPage = () => {
     return names[category] || category;
   };
 
-  const getCategoryIcon = (category: string) => {
-    const icons: Record<string, string> = {
-      'medical': '🏥',
-      'family': '👨‍👩‍👧‍👦',
-      'reassurance': '🤝',
-      'communication': '💬',
-      'instructions': '📋',
-      'basic needs': '🥤'
-    };
-    return icons[category] || '📝';
-  };
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
       {/* Header */}
       <div className="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Phrases</h2>
-        
-        {/* Debug: Show current languages */}
-        <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-          Debug: {getLanguageName(sourceLanguage)} → {getLanguageName(targetLanguage)}
-        </div>
         
         {/* Search Bar */}
         <SearchBar
@@ -165,7 +124,6 @@ export const QuickPhrasesPage = () => {
               >
                 <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset text-gray-900 dark:text-white">
                   <div className="flex items-center gap-3">
-                    {showEmojis && <span className="text-xl">{getCategoryIcon(category)}</span>}
                     <div>
                       <h3 className="font-medium">
                         {getCategoryDisplayName(category)}
@@ -183,15 +141,8 @@ export const QuickPhrasesPage = () => {
                     {categoryPhrases.map((phrase, index) => (
                       <div
                         key={index}
-                        onClick={() => handlePhraseSelect(phrase)}
+                        onClick={(e) => e.currentTarget.querySelectorAll('button')[1]?.click()}
                         className="p-4 bg-white dark:bg-gray-800 active:bg-blue-50 dark:active:bg-blue-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handlePhraseSelect(phrase);
-                          }
-                        }}
                       >
                         {/* Source Language */}
                         <div className="flex items-center justify-between mb-2">
