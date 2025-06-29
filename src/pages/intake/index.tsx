@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { CheckCircle, AlertCircle, Save } from 'lucide-react';
+import { CheckCircle, Save } from 'lucide-react';
 import { intakePhrases, Phrase } from '../../data/phrases';
 import { useTextToSpeech } from '../../hooks/useTextToSpeech';
 import { useTranslationStore } from '../../store/translationStore';
@@ -145,31 +145,6 @@ export const IntakePage = () => {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto prevent-bounce scrollbar-hide">
-        {/* Status Banner */}
-        <div className={`p-4 border-b ${
-          isIntakeComplete 
-            ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' 
-            : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-        }`}>
-          <div className="flex items-center gap-2">
-            {isIntakeComplete ? (
-              <CheckCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            ) : (
-              <AlertCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            )}
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                {isIntakeComplete ? 'Intake Complete' : 'Intake Required'}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {isIntakeComplete 
-                  ? 'All required information has been collected'
-                  : 'Please complete the required fields below'
-                }
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Intake Form Section */}
         <IntakeFormSection

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Volume2, ChevronDown } from 'lucide-react';
+import { Volume2, ChevronDown, CheckCircle, AlertCircle } from 'lucide-react';
 import { useIntakeStore } from '../../store/intakeStore';
 import { useConversationStore } from '../../store/conversationStore';
 import { useAppStore } from '../../store/appStore';
@@ -13,8 +13,9 @@ interface IntakeFormSectionProps {
 export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>(
   ({ searchTerm, onPlayAudio }, ref) => {
     const { intakeData, updateIntakeData } = useIntakeStore();
+    const { isIntakeComplete } = useIntakeStore();
     const { addConversation } = useConversationStore();
-    const { showEmojis, sourceLanguage, targetLanguage } = useAppStore();
+    const { sourceLanguage, targetLanguage } = useAppStore();
 
     // Define intake questions with multilingual support
     const intakeQuestions = {
@@ -82,11 +83,20 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
       >
         <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset text-gray-900 dark:text-white">
           <div className="flex items-center gap-3">
-            {showEmojis && <span className="text-xl">📋</span>}
+            {isIntakeComplete ? (
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            )}
             <div>
-              <h3 className="font-medium">Required Intake Form</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Complete essential documentation
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                {isIntakeComplete ? 'Intake Complete' : 'Intake Required'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {isIntakeComplete 
+                  ? 'All required information has been collected'
+                  : 'Please complete the required fields below'
+                }
               </p>
             </div>
           </div>
