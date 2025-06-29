@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useTranslationStore } from '../store/translationStore';
 import { getLanguageName } from '../config/languages';
+import { TipsPanel } from '../components/TipsPanel';
 
 export const TranslationPage = () => {
   const { speak } = useTextToSpeech();
@@ -19,6 +20,16 @@ export const TranslationPage = () => {
     } catch (err) {
       console.error('Failed to copy text:', err);
     }
+  };
+
+  const handleRecordResponse = () => {
+    // Navigate to record page with context to toggle speaker for back-and-forth conversation
+    navigate('/record?context=response');
+  };
+
+  const handleReRecord = () => {
+    // Navigate to record page with context to re-record with same speaker
+    navigate('/record?context=re-record');
   };
 
   if (!translation) {
@@ -45,11 +56,20 @@ export const TranslationPage = () => {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Translation Result</h2>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate(-1)}
-              className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
-              title="Go back"
+              onClick={handleReRecord}
+              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 flex items-center gap-1"
+              title="Re-record with same speaker"
             >
-              <Mic className="w-5 h-5" />
+              <Mic className="w-4 h-4" />
+              <span className="hidden sm:inline">Re-record</span>
+            </button>
+            <button
+              onClick={handleRecordResponse}
+              className="px-3 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 flex items-center gap-1"
+              title="Record response (toggle speaker)"
+            >
+              <Mic className="w-4 h-4" />
+              <span className="hidden sm:inline">Record Response</span>
             </button>
           </div>
         </div>
@@ -120,16 +140,19 @@ export const TranslationPage = () => {
         </div>
       </div>
 
-      {/* Usage Tips */}
-      <div className="p-4 bg-green-50 dark:bg-green-900/20 border-t border-green-100 dark:border-green-800 flex-shrink-0">
-        <h3 className="font-medium text-green-900 dark:text-green-100 mb-2">Quick Actions:</h3>
-        <ul className="text-green-800 dark:text-green-200 text-sm space-y-1">
-          <li>• Tap speaker icons to hear audio playback</li>
-          <li>• Use copy buttons to share text via other apps</li>
-          <li>• Tap swap icon to reverse translation direction</li>
-          <li>• Record new speech to update translation</li>
-        </ul>
-      </div>
+      {/* Tips Panel */}
+      <TipsPanel
+        title="Quick Actions"
+        color="green"
+        storageKey="translation-tips-dismissed"
+        tips={[
+          "Tap speaker icons to hear audio playback",
+          "Use copy buttons to share text via other apps",
+          "Use 'Record Response' to automatically toggle speaker for back-and-forth conversation",
+          "Use 'Re-record' to record again with the same speaker",
+          "All translations are automatically logged"
+        ]}
+      />
     </div>
   );
 };

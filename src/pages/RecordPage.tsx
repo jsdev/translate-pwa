@@ -5,7 +5,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useTranslationStore } from '../store/translationStore';
 import { useConversationStore } from '../store/conversationStore';
 import { useAppStore } from '../store/appStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TipsPanel } from '../components/TipsPanel';
@@ -14,6 +14,7 @@ import { LanguageModeSelector } from '../components/LanguageModeSelector';
 import { LanguageModeService, LanguageMode, LanguageResolutionResult } from '../services/languageModeService';
 
 export const RecordPage = () => {
+  const [searchParams] = useSearchParams();
   const [isRecording, setIsRecording] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [error, setError] = useState('');
@@ -26,9 +27,35 @@ export const RecordPage = () => {
   const { isSupported, startRecognition, stopRecognition } = useSpeechRecognition();
   const { translate } = useTranslation();
   const { setTranslation } = useTranslationStore();
-  const { addConversation } = useConversationStore();
+  const { addConversation, conversations } = useConversationStore();
   const { sourceLanguage, targetLanguage } = useAppStore();
   const navigate = useNavigate();
+
+  // Determine initial speaker based on URL params and conversation context
+  useEffect(() => {
+    const contextParam = searchParams.get('context');
+    const speakerParam = searchParams.get('speaker') as Speaker | null;
+    
+    if (speakerParam && (speakerParam === 'officer' || speakerParam === 'detained')) {
+      setSelectedSpeaker(speakerParam);
+    } else if (contextParam === 'response') {
+      // If coming from translation page for a response, toggle speaker
+      const lastConversation = conversations[0]; // Most recent conversation
+      if (lastConversation?.speaker) {
+        const nextSpeaker: Speaker = lastConversation.speaker === 'officer' ? 'detained' : 'officer';
+        setSelectedSpeaker(nextSpeaker);
+      } else {
+        setSelectedSpeaker('detained'); // Default to detained for responses
+      }
+    } else if (contextParam === 're-record') {
+      // If re-recording, keep the same speaker as the last conversation
+      const lastConversation = conversations[0];
+      if (lastConversation?.speaker) {
+        setSelectedSpeaker(lastConversation.speaker);
+      }
+    }
+    // Otherwise keep default 'officer'
+  }, [searchParams, conversations]);
 
   // Create language mode service instance
   const languageModeService = useMemo(() => 
@@ -175,6 +202,20 @@ export const RecordPage = () => {
         <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
           Select who is speaking, choose language mode, then tap the microphone to record.
         </p>
+        
+        {/* Context Indicator */}
+        {searchParams.get('context') && (
+          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {searchParams.get('context') === 'response' && (
+                <>📢 Recording response - Speaker automatically switched for conversation flow</>
+              )}
+              {searchParams.get('context') === 're-record' && (
+                <>🔄 Re-recording - Same speaker as previous recording</>
+              )}
+            </p>
+          </div>
+        )}
         
         {/* Speaker Selection */}
         <SpeakerSelector

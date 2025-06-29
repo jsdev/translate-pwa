@@ -160,7 +160,7 @@ export const ConversationsPage = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded font-medium">
+                    <span className="text-xs text-gray-700 dark:text-gray-300 px-2 py-1 rounded font-medium">
                       {getConversationType(conversation.originalLang, conversation.targetLang)}
                     </span>
                     {conversation.speaker && (

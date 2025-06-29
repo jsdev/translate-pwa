@@ -7,7 +7,7 @@ import { useIntakeStore } from '../../store/intakeStore';
 import { useAppStore } from '../../store/appStore';
 import { SearchBar } from '../../components/SearchBar';
 import { TipsPanel } from '../../components/TipsPanel';
-import { IntakeFormSection } from './IntakeFormSection';
+import IntakeFormSection from './IntakeFormSection';
 import { AdditionalPhrasesSection } from './AdditionalPhrasesSection';
 
 export const IntakePage = () => {
