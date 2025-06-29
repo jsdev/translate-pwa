@@ -119,7 +119,7 @@ export const QuickPhrasesPage = () => {
             return (
               <details 
                 key={category} 
-                className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                className="group bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                 open={isFirstCategory || searchTerm !== ''}
               >
                 <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset text-gray-900 dark:text-white">
@@ -133,7 +133,7 @@ export const QuickPhrasesPage = () => {
                       </p>
                     </div>
                   </div>
-                  <ChevronDown className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform duration-200" />
+                  <ChevronDown className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform duration-200 group-open:rotate-180" />
                 </summary>
                 
                 <div className="border-t border-gray-100 dark:border-gray-700">
