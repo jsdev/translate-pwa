@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Volume2, Calendar, Clock, User, UserCheck } from 'lucide-react';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useConversationStore } from '../store/conversationStore';
@@ -11,6 +11,25 @@ export const ConversationsPage = () => {
   const { speak } = useTextToSpeech();
   const { conversations, clearAllConversations } = useConversationStore();
   const conversationsRef = useRef<HTMLDivElement>(null);
+  const conversationsEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when page loads or when new conversations are added
+  useEffect(() => {
+    if (conversationsEndRef.current && conversations.length > 0) {
+      conversationsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [conversations.length]);
+
+  // Also scroll to bottom when the component first mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (conversationsEndRef.current && conversations.length > 0) {
+        conversationsEndRef.current.scrollIntoView({ behavior: 'auto' });
+      }
+    }, 100); // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timer);
+  }, [conversations.length]);
 
   const filteredConversations = conversations.filter(conversation => {
     const matchesSearch = conversation.originalText.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,7 +53,7 @@ export const ConversationsPage = () => {
     }
     
     return matchesSearch;
-  });
+  }).reverse(); // Reverse to show oldest first (newest at bottom)
 
   const handleScrollToConversations = () => {
     if (searchTerm.trim() && conversationsRef.current) {
@@ -225,6 +244,8 @@ export const ConversationsPage = () => {
                 </div>
               </div>
             ))}
+            {/* Scroll target for auto-scroll to bottom */}
+            <div ref={conversationsEndRef} />
           </div>
         )}
       </div>
@@ -238,6 +259,7 @@ export const ConversationsPage = () => {
           tips={[
             "All conversations are stored locally for audit purposes",
             "Speaker identification helps track conversation flow",
+            "Most recent messages appear at the bottom - page auto-scrolls",
             "Use search and filters to find specific interactions",
             "Audio playback available for all recorded conversations",
             "Clear all history as needed for privacy"
