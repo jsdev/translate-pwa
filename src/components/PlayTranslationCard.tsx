@@ -30,7 +30,7 @@ export const PlayTranslationCard: React.FC<PlayTranslationCardProps> = ({
   return (
     <div 
       onClick={handleCardClick}
-      className={`w-full p-4 bg-transparent cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors rounded-lg ${className}`}
+      className={`w-full p-4 bg-transparent cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${className}`}
     >
       <div className="flex items-center justify-between">
         <div className="flex-1 pr-4">

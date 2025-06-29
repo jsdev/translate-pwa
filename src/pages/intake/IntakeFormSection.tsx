@@ -75,14 +75,13 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
         <div className="border-t border-gray-100 dark:border-gray-700">
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {/* Identification Status Card */}
-            <div className="p-4">
               <PlayTranslationCard
                 title={getQuestionText(intakeQuestions.identification, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.identification, targetLanguage)}
                 onPlay={() => handlePlayQuestion('identification')}
-                className="mb-4"
+                className='border-b-0'
               />
-              <div className="flex gap-3">
+              <div className="p-4 flex gap-3 border-none">
                 <button
                   onClick={() => updateIntakeData({ hasIdentification: true })}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
@@ -104,74 +103,67 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   No
                 </button>
               </div>
-            </div>
 
             {/* Name Card */}
-            <div className="p-4">
               <PlayTranslationCard
                 title={getQuestionText(intakeQuestions.name, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.name, targetLanguage)}
                 onPlay={() => handlePlayQuestion('name')}
-                className="mb-4"
+                className='border-b-0'
               />
               <input
                 type="text"
                 value={intakeData.name}
                 onChange={(e) => updateIntakeData({ name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 placeholder="Enter full name"
               />
-            </div>
 
             {/* Country Card */}
-            <div className="p-4">
               <PlayTranslationCard
                 title={getQuestionText(intakeQuestions.country, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.country, targetLanguage)}
                 onPlay={() => handlePlayQuestion('country')}
-                className="mb-4"
+                className='border-b-0'
               />
               <input
                 type="text"
                 value={intakeData.country}
                 onChange={(e) => updateIntakeData({ country: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 placeholder="Enter country of citizenship"
               />
-            </div>
 
             {/* Passport Number Card (conditional) */}
             {intakeData.hasIdentification === true && (
-              <div className="p-4">
+              <>
                 <PlayTranslationCard
                   title={getQuestionText(intakeQuestions.passport, sourceLanguage)}
                   subtitle={getQuestionText(intakeQuestions.passport, targetLanguage)}
                   onPlay={() => handlePlayQuestion('passport')}
-                  className="mb-4"
+                  className='border-b-0'
                 />
                 <input
                   type="text"
                   value={intakeData.passportNumber}
                   onChange={(e) => updateIntakeData({ passportNumber: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                   placeholder="Enter passport or ID number"
                 />
-              </div>
+              </>
             )}
 
             {/* Additional Information */}
-            <div className="p-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Additional Information
-              </label>
-              <textarea
+              <label className="block pt-4 font-medium text-gray-900 dark:text-gray-100">
+                <span className="px-4">Additional Information</span>
+                <textarea
                 value={intakeData.additionalInfo}
                 onChange={(e) => updateIntakeData({ additionalInfo: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 placeholder="Any additional notes or information"
               />
-            </div>
+              </label>
           </div>
         </div>
       </details>
