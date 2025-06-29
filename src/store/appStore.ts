@@ -7,7 +7,6 @@ interface AppStore extends AppSettings {
   toggleTips: () => void;
   toggleEmojis: () => void;
   setTheme: (theme: Theme) => void;
-  setSourceLanguage: (language: string) => void;
   setTargetLanguage: (language: string) => void;
   resetDismissedTips: () => void;
   resetToDefaults: () => void;
@@ -36,8 +35,9 @@ const applyTheme = (theme: Theme) => {
 };
 
 export const useAppStore = create<AppStore>((set, get) => {
-  // Initialize with merged settings
+  // Initialize with merged settings, but always ensure source language is English
   const initialSettings = getInitialSettings();
+  initialSettings.sourceLanguage = 'en'; // Force English for officers
   
   // Apply initial theme
   applyTheme(initialSettings.theme);
@@ -66,14 +66,8 @@ export const useAppStore = create<AppStore>((set, get) => {
       applyTheme(theme);
     },
     
-    setSourceLanguage: (sourceLanguage) => {
-      const newSettings = { ...get(), sourceLanguage };
-      set(newSettings);
-      saveSettings(newSettings);
-    },
-    
     setTargetLanguage: (targetLanguage) => {
-      const newSettings = { ...get(), targetLanguage };
+      const newSettings = { ...get(), targetLanguage, sourceLanguage: 'en' }; // Always keep source as English
       set(newSettings);
       saveSettings(newSettings);
     },
@@ -93,8 +87,9 @@ export const useAppStore = create<AppStore>((set, get) => {
     },
     
     resetToDefaults: () => {
-      set(defaultSettings);
-      saveSettings(defaultSettings);
+      const defaultsWithEnglish = { ...defaultSettings, sourceLanguage: 'en' }; // Ensure English
+      set(defaultsWithEnglish);
+      saveSettings(defaultsWithEnglish);
       applyTheme(defaultSettings.theme);
       
       // Also clear dismissed tips

@@ -9,6 +9,7 @@ import { RecordPage } from './pages/RecordPage';
 import { TranslationPage } from './pages/TranslationPage';
 import { ConversationsPage } from './pages/ConversationsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { VoiceDiagnosticsPage } from './pages/VoiceDiagnosticsPage';
 import { useAppStore } from './store/appStore';
 
 const MobileApp = () => {
@@ -57,12 +58,14 @@ const MobileApp = () => {
           <Route path="/translate" element={<TranslationPage />} />
           <Route path="/conversations" element={<ConversationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/voice-diagnostics" element={<VoiceDiagnosticsPage />} />
           {/* Fallback route for any unmatched paths */}
           <Route path="*" element={<Navigate to="/intake" replace />} />
         </Routes>
       </main>
       <Routes>
         <Route path="/settings" element={null} />
+        <Route path="/voice-diagnostics" element={null} />
         <Route path="*" element={<MobileNav />} />
       </Routes>
     </div>

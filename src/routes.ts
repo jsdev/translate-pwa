@@ -11,4 +11,5 @@ export const appRoutes = [
   '/translate',
   '/conversations',
   '/settings',
+  '/voice-diagnostics',
 ];

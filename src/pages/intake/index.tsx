@@ -5,6 +5,7 @@ import { useTextToSpeech } from '../../hooks/useTextToSpeech';
 import { useTranslationStore } from '../../store/translationStore';
 import { useConversationStore } from '../../store/conversationStore';
 import { useIntakeStore } from '../../store/intakeStore';
+import { useAppStore } from '../../store/appStore';
 import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../../components/SearchBar';
 import { TipsPanel } from '../../components/TipsPanel';
@@ -17,15 +18,29 @@ export const IntakePage = () => {
   const { setTranslation } = useTranslationStore();
   const { addConversation } = useConversationStore();
   const { isIntakeComplete } = useIntakeStore();
+  const { sourceLanguage, targetLanguage } = useAppStore();
   const navigate = useNavigate();
   const intakeFormRef = useRef<HTMLDetailsElement>(null);
   const additionalPhrasesRef = useRef<HTMLDetailsElement>(null);
 
+  // Debug logging for language changes
+  React.useEffect(() => {
+    console.log('IntakePage - Current languages:', { sourceLanguage, targetLanguage });
+  }, [sourceLanguage, targetLanguage]);
+
+  // Helper function to get phrase text in the specified language
+  const getPhraseText = (phrase: Phrase, langCode: string): string => {
+    const text = (phrase as any)[langCode];
+    return typeof text === 'string' ? text : phrase.en; // Fallback to English
+  };
+
   const filteredPhrases = intakePhrases.filter(phrase => {
     if (searchTerm === '') return true;
     const searchLower = searchTerm.toLowerCase();
-    return phrase.en.toLowerCase().includes(searchLower) ||
-           phrase.es.toLowerCase().includes(searchLower);
+    const sourceText = getPhraseText(phrase, sourceLanguage);
+    const targetText = getPhraseText(phrase, targetLanguage);
+    return sourceText.toLowerCase().includes(searchLower) ||
+           targetText.toLowerCase().includes(searchLower);
   });
 
   const handleScrollToAdditionalPhrases = () => {
@@ -50,11 +65,14 @@ export const IntakePage = () => {
   };
 
   const handlePhraseSelect = (phrase: Phrase) => {
+    const sourceText = getPhraseText(phrase, sourceLanguage);
+    const targetText = getPhraseText(phrase, targetLanguage);
+    
     const translation = {
-      originalText: phrase.en,
-      translatedText: phrase.es,
-      originalLang: 'en' as const,
-      targetLang: 'es' as const
+      originalText: sourceText,
+      translatedText: targetText,
+      originalLang: sourceLanguage,
+      targetLang: targetLanguage
     };
     
     setTranslation(translation);
@@ -74,11 +92,14 @@ export const IntakePage = () => {
     speak(text, lang);
     
     // Add to conversation history when audio is played with officer speaker
+    const sourceText = getPhraseText(phrase, sourceLanguage);
+    const targetText = getPhraseText(phrase, targetLanguage);
+    
     const translation = {
-      originalText: phrase.en,
-      translatedText: phrase.es,
-      originalLang: 'en' as const,
-      targetLang: 'es' as const
+      originalText: sourceText,
+      translatedText: targetText,
+      originalLang: sourceLanguage,
+      targetLang: targetLanguage
     };
     
     addConversation({

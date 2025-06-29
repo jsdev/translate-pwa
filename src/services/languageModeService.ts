@@ -131,11 +131,29 @@ export class LanguageModeService {
       
       const autoDetectResult = this.autoDetectManager.detectLanguageWithContext(detectedText, context);
       
+      // Apply speaker context override if provided
+      let finalSourceLang = autoDetectResult.detectedLanguage;
+      let finalTargetLang = autoDetectResult.targetLanguage;
+      
+      if (speakerType) {
+        if (speakerType === 'officer') {
+          // Officer speaks source language (English), translate to target
+          finalSourceLang = this.currentSourceLanguage;
+          finalTargetLang = this.currentTargetLanguage;
+        } else if (speakerType === 'detained') {
+          // Detained person speaks target language, translate to source (English)
+          finalSourceLang = this.currentTargetLanguage;
+          finalTargetLang = this.currentSourceLanguage;
+        }
+      }
+      
       return {
-        sourceLang: autoDetectResult.detectedLanguage,
-        targetLang: autoDetectResult.targetLanguage,
+        sourceLang: finalSourceLang,
+        targetLang: finalTargetLang,
         confidence: autoDetectResult.confidence,
-        reasoning: autoDetectResult.reasoning,
+        reasoning: speakerType 
+          ? `${speakerType === 'officer' ? 'Officer' : 'Detained person'} speaking (auto-detect): ${finalSourceLang} → ${finalTargetLang}`
+          : autoDetectResult.reasoning || 'Auto-detection',
         alternatives: autoDetectResult.alternatives?.map(alt => ({
           source: alt.source,
           target: alt.target,
@@ -143,11 +161,30 @@ export class LanguageModeService {
         }))
       };
     } else {
-      // Use explicit mode settings
+      // Use explicit mode settings but always consider speaker context
+      let sourceLang = mode.sourceLang || this.currentSourceLanguage;
+      let targetLang = mode.targetLang || this.currentTargetLanguage;
+      
+      // Speaker context ALWAYS overrides mode settings for clear direction
+      if (speakerType) {
+        if (speakerType === 'officer') {
+          // Officer speaks source language (English), translate to target
+          sourceLang = this.currentSourceLanguage;
+          targetLang = this.currentTargetLanguage;
+        } else if (speakerType === 'detained') {
+          // Detained person speaks target language, translate to source (English)
+          sourceLang = this.currentTargetLanguage;
+          targetLang = this.currentSourceLanguage;
+        }
+      }
+      
       return {
-        sourceLang: mode.sourceLang || this.currentSourceLanguage,
-        targetLang: mode.targetLang || this.currentTargetLanguage,
-        confidence: 'high'
+        sourceLang,
+        targetLang,
+        confidence: 'high',
+        reasoning: speakerType 
+          ? `${speakerType === 'officer' ? 'Officer' : 'Detained person'} speaking: ${sourceLang} → ${targetLang}`
+          : `Manual mode: ${sourceLang} → ${targetLang}`
       };
     }
   }

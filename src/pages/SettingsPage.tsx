@@ -1,9 +1,9 @@
 import React from 'react';
-import { ArrowLeft, Monitor, Sun, Moon, Info, Smile, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Monitor, Sun, Moon, Info, Smile, RotateCcw, Volume2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import { defaultSettings } from '../config/defaultSettings';
-import { LanguageSelector } from '../components/LanguageSelector';
+import { LanguageAutocomplete } from '../components/LanguageAutocomplete';
 
 export const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,11 +16,20 @@ export const SettingsPage: React.FC = () => {
     toggleEmojis, 
     sourceLanguage,
     targetLanguage,
-    setSourceLanguage,
     setTargetLanguage,
     resetDismissedTips,
     resetToDefaults
   } = useAppStore();
+
+  // Debug logging for language changes
+  React.useEffect(() => {
+    console.log('SettingsPage - Current languages:', { sourceLanguage, targetLanguage });
+  }, [sourceLanguage, targetLanguage]);
+
+  const handleTargetLanguageChange = (newLanguage: string) => {
+    console.log('SettingsPage - Setting target language:', newLanguage);
+    setTargetLanguage(newLanguage);
+  };
 
   const handleBack = () => {
     navigate(-1);
@@ -119,18 +128,43 @@ export const SettingsPage: React.FC = () => {
             <fieldset>
               <legend className="text-lg font-medium text-gray-900 dark:text-white px-4 py-3 border-b border-gray-100 dark:border-gray-800">Languages</legend>
               <div className="p-4 space-y-4">
-                <LanguageSelector
-                  selectedLanguage={sourceLanguage}
-                  onLanguageChange={setSourceLanguage}
-                  label="Officer Language (Source)"
-                  className="w-full"
-                />
-                <LanguageSelector
+                {/* Officer Language Note */}
+                {/* <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        Officer Language: English (Fixed)
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                        Officers are expected to be proficient in English for using this application
+                      </div>
+                    </div>
+                  </div>
+                </div> */}
+                
+                {/* Detained Person Language Selection */}
+                <LanguageAutocomplete
                   selectedLanguage={targetLanguage}
-                  onLanguageChange={setTargetLanguage}
-                  label="Detained Person Language (Target)"
+                  onLanguageChange={handleTargetLanguageChange}
+                  label="Detained Person Language"
                   className="w-full"
+                  excludeLanguages={['en']} // Exclude English since officer handles English
                 />
+                
+                {/* Voice Diagnostics Button */}
+                <button
+                  onClick={() => navigate('/voice-diagnostics')}
+                  className="w-full flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600 text-left"
+                >
+                  <Volume2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white">Test Voice Support</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Check which languages have text-to-speech voices available
+                    </div>
+                  </div>
+                </button>
               </div>
             </fieldset>
           </section>

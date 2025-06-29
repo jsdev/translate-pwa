@@ -12,7 +12,13 @@ interface AdditionalPhrasesSectionProps {
 
 export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, AdditionalPhrasesSectionProps>(
   ({ searchTerm, filteredPhrases, onPhraseSelect, onPlayAudio }, ref) => {
-    const { showEmojis } = useAppStore();
+    const { showEmojis, sourceLanguage, targetLanguage } = useAppStore();
+    
+    // Helper function to get phrase text in the specified language
+    const getPhraseText = (phrase: Phrase, langCode: string): string => {
+      const text = (phrase as any)[langCode];
+      return typeof text === 'string' ? text : phrase.en; // Fallback to English
+    };
 
     return (
       <details 
@@ -57,31 +63,45 @@ export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, Additiona
                     }
                   }}
                 >
-                  {/* English */}
+                  {/* Source Language */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex-1">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">English</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{phrase.en}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        {sourceLanguage === 'en' ? 'English' : 
+                         sourceLanguage === 'es' ? 'Español' :
+                         sourceLanguage === 'zh' ? '中文' :
+                         sourceLanguage === 'ar' ? 'العربية' : 'English'}
+                      </div>
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {getPhraseText(phrase, sourceLanguage)}
+                      </div>
                     </div>
                     <button
-                      onClick={(e) => onPlayAudio(phrase.en, 'en', phrase, e)}
+                      onClick={(e) => onPlayAudio(getPhraseText(phrase, sourceLanguage), sourceLanguage, phrase, e)}
                       className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                      title="Play English audio"
+                      title={`Play ${sourceLanguage} audio`}
                     >
                       <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
 
-                  {/* Spanish */}
+                  {/* Target Language */}
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Español</div>
-                      <div className="font-medium text-gray-900 dark:text-white">{phrase.es}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        {targetLanguage === 'en' ? 'English' : 
+                         targetLanguage === 'es' ? 'Español' :
+                         targetLanguage === 'zh' ? '中文' :
+                         targetLanguage === 'ar' ? 'العربية' : 'Español'}
+                      </div>
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {getPhraseText(phrase, targetLanguage)}
+                      </div>
                     </div>
                     <button
-                      onClick={(e) => onPlayAudio(phrase.es, 'es', phrase, e)}
+                      onClick={(e) => onPlayAudio(getPhraseText(phrase, targetLanguage), targetLanguage, phrase, e)}
                       className="p-2 text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                      title="Play Spanish audio"
+                      title={`Play ${targetLanguage} audio`}
                     >
                       <Volume2 className="w-4 h-4" />
                     </button>

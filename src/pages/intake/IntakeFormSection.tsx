@@ -3,31 +3,74 @@ import { Volume2, ChevronDown } from 'lucide-react';
 import { useIntakeStore } from '../../store/intakeStore';
 import { useConversationStore } from '../../store/conversationStore';
 import { useAppStore } from '../../store/appStore';
+import { Phrase } from '../../data/phrases';
 
 interface IntakeFormSectionProps {
   searchTerm: string;
-  onPlayAudio: (text: string, lang: string, phrase: { en: string; es: string; category: string }, e: React.MouseEvent) => void;
+  onPlayAudio: (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => void;
 }
 
 export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>(
   ({ searchTerm, onPlayAudio }, ref) => {
     const { intakeData, updateIntakeData } = useIntakeStore();
     const { addConversation } = useConversationStore();
-    const { showEmojis } = useAppStore();
+    const { showEmojis, sourceLanguage, targetLanguage } = useAppStore();
 
-    const handlePlayQuestion = (english: string, spanish: string, e: React.MouseEvent) => {
+    // Define intake questions with multilingual support
+    const intakeQuestions = {
+      identification: {
+        en: "Do you have any identification?",
+        es: "¿Tiene alguna identificación?",
+        zh: "您有身份证件吗？",
+        ar: "هل لديك أي هوية؟"
+      },
+      name: {
+        en: "What is your name?",
+        es: "¿Cuál es su nombre?",
+        zh: "您叫什么名字？",
+        ar: "ما اسمك؟"
+      },
+      country: {
+        en: "What country are you from?",
+        es: "¿De qué país es usted?",
+        zh: "您来自哪个国家？",
+        ar: "من أي بلد أنت؟"
+      },
+      passport: {
+        en: "What is your passport number?",
+        es: "¿Cuál es su número de pasaporte?",
+        zh: "您的护照号码是什么？",
+        ar: "ما هو رقم جواز سفرك؟"
+      }
+    };
+
+    const getQuestionText = (question: any, langCode: string): string => {
+      return question[langCode] || question.en; // Fallback to English
+    };
+
+    const handlePlayQuestion = (questionKey: keyof typeof intakeQuestions, e: React.MouseEvent) => {
       e.stopPropagation();
+      const englishText = getQuestionText(intakeQuestions[questionKey], sourceLanguage);
+      const targetText = getQuestionText(intakeQuestions[questionKey], targetLanguage);
+      
       addConversation({
-        originalText: english,
-        translatedText: spanish,
-        originalLang: 'en',
-        targetLang: 'es',
+        originalText: englishText,
+        translatedText: targetText,
+        originalLang: sourceLanguage,
+        targetLang: targetLanguage,
         source: 'phrase',
         speaker: 'officer'
       });
+      
       // Create a mock phrase object for the onPlayAudio handler
-      const mockPhrase = { en: english, es: spanish, category: 'intake' };
-      onPlayAudio(spanish, 'es', mockPhrase, e);
+      const mockPhrase: Phrase = { 
+        en: intakeQuestions[questionKey].en,
+        es: intakeQuestions[questionKey].es,
+        zh: intakeQuestions[questionKey].zh || intakeQuestions[questionKey].en,
+        ar: intakeQuestions[questionKey].ar || intakeQuestions[questionKey].en,
+        category: 'intake' 
+      };
+      onPlayAudio(targetText, targetLanguage, mockPhrase, e);
     };
 
     return (
@@ -56,17 +99,17 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
             <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Do you have any identification?</h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">¿Tiene alguna identificación?</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    {getQuestionText(intakeQuestions.identification, sourceLanguage)}
+                  </h4>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {getQuestionText(intakeQuestions.identification, targetLanguage)}
+                  </p>
                 </div>
                 <button
-                  onClick={(e) => handlePlayQuestion(
-                    "Do you have any identification?",
-                    "¿Tiene alguna identificación?",
-                    e
-                  )}
+                  onClick={(e) => handlePlayQuestion('identification', e)}
                   className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title="Play Spanish audio"
+                  title={`Play ${targetLanguage.toUpperCase()} audio`}
                 >
                   <Volume2 className="w-5 h-5" />
                 </button>
@@ -101,17 +144,17 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
             <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">What is your name?</h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">¿Cuál es su nombre?</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    {getQuestionText(intakeQuestions.name, sourceLanguage)}
+                  </h4>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {getQuestionText(intakeQuestions.name, targetLanguage)}
+                  </p>
                 </div>
                 <button
-                  onClick={(e) => handlePlayQuestion(
-                    "What is your name?",
-                    "¿Cuál es su nombre?",
-                    e
-                  )}
+                  onClick={(e) => handlePlayQuestion('name', e)}
                   className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title="Play Spanish audio"
+                  title={`Play ${targetLanguage.toUpperCase()} audio`}
                 >
                   <Volume2 className="w-5 h-5" />
                 </button>
@@ -131,17 +174,17 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
             <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">What country are you from?</h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">¿De qué país es usted?</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    {getQuestionText(intakeQuestions.country, sourceLanguage)}
+                  </h4>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {getQuestionText(intakeQuestions.country, targetLanguage)}
+                  </p>
                 </div>
                 <button
-                  onClick={(e) => handlePlayQuestion(
-                    "What country are you from?",
-                    "¿De qué país es usted?",
-                    e
-                  )}
+                  onClick={(e) => handlePlayQuestion('country', e)}
                   className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                  title="Play Spanish audio"
+                  title={`Play ${targetLanguage.toUpperCase()} audio`}
                 >
                   <Volume2 className="w-5 h-5" />
                 </button>
@@ -162,17 +205,17 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
               <div className="p-4 bg-gray-50 dark:bg-gray-700 mb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">What is your passport number?</h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">¿Cuál es su número de pasaporte?</p>
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                      {getQuestionText(intakeQuestions.passport, sourceLanguage)}
+                    </h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {getQuestionText(intakeQuestions.passport, targetLanguage)}
+                    </p>
                   </div>
                   <button
-                    onClick={(e) => handlePlayQuestion(
-                      "What is your passport number?",
-                      "¿Cuál es su número de pasaporte?",
-                      e
-                    )}
+                    onClick={(e) => handlePlayQuestion('passport', e)}
                     className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-                    title="Play Spanish audio"
+                    title={`Play ${targetLanguage.toUpperCase()} audio`}
                   >
                     <Volume2 className="w-5 h-5" />
                   </button>

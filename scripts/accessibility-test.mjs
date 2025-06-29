@@ -12,6 +12,7 @@ const appRoutes = [
   '/translate',
   '/conversations',
   '/settings',
+  '/voice-diagnostics',
 ];
 
 const PORT = 8080;

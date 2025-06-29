@@ -26,6 +26,8 @@
     "fix:chromedriver": "bash scripts/fix-chromedriver.sh"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
     "@supabase/supabase-js": "^2.39.0",
     "@vitejs/plugin-react": "^4.6.0",
     "js-yaml": "^4.1.0",
