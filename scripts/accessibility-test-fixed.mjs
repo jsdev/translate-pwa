@@ -13,7 +13,7 @@ const routes = [
   '/',
   '/intake',
   '/phrases', 
-  '/translation',
+  '/translate',
   '/record',
   '/conversations',
   '/settings'

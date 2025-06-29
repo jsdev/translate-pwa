@@ -13,7 +13,7 @@ const routes = [
   { name: 'Home (redirects to Intake)', path: '/', description: 'Landing page with redirect logic' },
   { name: 'Intake Form', path: '/intake', description: 'Primary data collection interface' },
   { name: 'Quick Phrases', path: '/phrases', description: 'Categorized phrase library' },
-  { name: 'Translation', path: '/translation', description: 'Real-time translation interface' },
+  { name: 'Translation', path: '/translate', description: 'Real-time translation interface' },
   { name: 'Record', path: '/record', description: 'Audio recording and playback' },
   { name: 'Conversations', path: '/conversations', description: 'Conversation history and audit trail' },
   { name: 'Settings', path: '/settings', description: 'User preferences and configuration' },
