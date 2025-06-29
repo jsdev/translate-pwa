@@ -1,7 +1,7 @@
 import React from 'react';
 import { User, UserCheck } from 'lucide-react';
 
-export type Speaker = 'officer' | 'detainee';
+export type Speaker = 'officer' | 'detained';
 
 interface SpeakerSelectorProps {
   selectedSpeaker: Speaker;

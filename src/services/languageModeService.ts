@@ -1,152 +1,193 @@
-import { languageUtils } from '../utils/languageUtils';
-import { supportedLanguages, getLanguageName } from '../config/languages';
+import { supportedLanguages, commonLanguagePairs } from '../config/languages';
+import { AutoDetectModeManager, AutoDetectContext } from './autoDetectModeManager';
 
-export type LanguageMode = 'auto' | 'source-to-target' | 'target-to-source';
-
-export interface LanguageModeConfig {
-  mode: LanguageMode;
-  sourceLanguage: string;
-  targetLanguage: string;
-}
-
-export interface TranslationDirection {
-  sourceLanguage: string;
-  targetLanguage: string;
+export interface LanguageMode {
+  id: string;
   label: string;
+  description: string;
+  sourceLang?: string;
+  targetLang?: string;
+  isAuto: boolean;
 }
 
-export class LanguageModeManager {
-  private sourceLanguage: string;
-  private targetLanguage: string;
+export interface LanguageResolutionResult {
+  sourceLang: string;
+  targetLang: string;
+  confidence: 'high' | 'medium' | 'low';
+  reasoning?: string;
+  alternatives?: Array<{
+    source: string;
+    target: string;
+    reasoning: string;
+  }>;
+}
+
+export class LanguageModeService {
+  private currentSourceLanguage: string;
+  private currentTargetLanguage: string;
+  private autoDetectManager: AutoDetectModeManager;
 
   constructor(sourceLanguage: string, targetLanguage: string) {
-    this.sourceLanguage = sourceLanguage;
-    this.targetLanguage = targetLanguage;
+    this.currentSourceLanguage = sourceLanguage;
+    this.currentTargetLanguage = targetLanguage;
+    this.autoDetectManager = new AutoDetectModeManager();
+  }
+
+  updateLanguages(sourceLanguage: string, targetLanguage: string) {
+    this.currentSourceLanguage = sourceLanguage;
+    this.currentTargetLanguage = targetLanguage;
   }
 
   /**
-   * Get all available language modes for the current language pair
+   * Get all available language modes based on current settings
    */
   getAvailableModes(): LanguageMode[] {
-    return ['auto', 'source-to-target', 'target-to-source'];
-  }
+    const modes: LanguageMode[] = [
+      {
+        id: 'auto',
+        label: 'Auto Detect',
+        description: 'Automatically detect the spoken language',
+        isAuto: true
+      }
+    ];
 
-  /**
-   * Get the display label for a language mode
-   */
-  getModeLabel(mode: LanguageMode): string {
-    const sourceName = getLanguageName(this.sourceLanguage);
-    const targetName = getLanguageName(this.targetLanguage);
-
-    switch (mode) {
-      case 'auto':
-        return 'Auto Detect';
-      case 'source-to-target':
-        return `${sourceName} → ${targetName}`;
-      case 'target-to-source':
-        return `${targetName} → ${sourceName}`;
-    }
-  }
-
-  /**
-   * Get the next language mode in the cycle
-   */
-  getNextMode(currentMode: LanguageMode): LanguageMode {
-    const modes = this.getAvailableModes();
-    const currentIndex = modes.indexOf(currentMode);
-    return modes[(currentIndex + 1) % modes.length];
-  }
-
-  /**
-   * Determine translation direction based on mode and detected language
-   */
-  getTranslationDirection(mode: LanguageMode, detectedText?: string): TranslationDirection {
-    switch (mode) {
-      case 'auto':
-        return this.getAutoDetectedDirection(detectedText || '');
-      case 'source-to-target':
-        return {
-          sourceLanguage: this.sourceLanguage,
-          targetLanguage: this.targetLanguage,
-          label: this.getModeLabel(mode)
-        };
-      case 'target-to-source':
-        return {
-          sourceLanguage: this.targetLanguage,
-          targetLanguage: this.sourceLanguage,
-          label: this.getModeLabel(mode)
-        };
-    }
-  }
-
-  /**
-   * Auto-detect language and determine best translation direction
-   */
-  private getAutoDetectedDirection(text: string): TranslationDirection {
-    const detectedLang = languageUtils.detectLanguage(text);
+    // Add current language pair as default
+    const sourceLang = supportedLanguages.find(l => l.code === this.currentSourceLanguage);
+    const targetLang = supportedLanguages.find(l => l.code === this.currentTargetLanguage);
     
-    // If detected language matches source, translate to target
-    if (detectedLang === this.sourceLanguage) {
+    if (sourceLang && targetLang) {
+      modes.push({
+        id: `${this.currentSourceLanguage}-${this.currentTargetLanguage}`,
+        label: `${sourceLang.name} → ${targetLang.name}`,
+        description: `Always translate from ${sourceLang.name} to ${targetLang.name}`,
+        sourceLang: this.currentSourceLanguage,
+        targetLang: this.currentTargetLanguage,
+        isAuto: false
+      });
+
+      // Add reverse direction if different
+      if (this.currentSourceLanguage !== this.currentTargetLanguage) {
+        modes.push({
+          id: `${this.currentTargetLanguage}-${this.currentSourceLanguage}`,
+          label: `${targetLang.name} → ${sourceLang.name}`,
+          description: `Always translate from ${targetLang.name} to ${sourceLang.name}`,
+          sourceLang: this.currentTargetLanguage,
+          targetLang: this.currentSourceLanguage,
+          isAuto: false
+        });
+      }
+    }
+
+    // Add other common language pairs that include either source or target language
+    commonLanguagePairs.forEach(pair => {
+      const pairId = `${pair.source}-${pair.target}`;
+      const reversePairId = `${pair.target}-${pair.source}`;
+      
+      // Skip if already added
+      if (modes.some(m => m.id === pairId || m.id === reversePairId)) {
+        return;
+      }
+
+      // Only add pairs that include current source or target language
+      if (pair.source === this.currentSourceLanguage || 
+          pair.target === this.currentTargetLanguage ||
+          pair.source === this.currentTargetLanguage || 
+          pair.target === this.currentSourceLanguage) {
+        
+        const sourceLang = supportedLanguages.find(l => l.code === pair.source);
+        const targetLang = supportedLanguages.find(l => l.code === pair.target);
+        
+        if (sourceLang && targetLang) {
+          modes.push({
+            id: pairId,
+            label: `${sourceLang.name} → ${targetLang.name}`,
+            description: `Always translate from ${sourceLang.name} to ${targetLang.name}`,
+            sourceLang: pair.source,
+            targetLang: pair.target,
+            isAuto: false
+          });
+        }
+      }
+    });
+
+    return modes;
+  }
+
+  /**
+   * Determine source and target languages based on mode and detected text
+   */
+  resolveLanguages(
+    mode: LanguageMode, 
+    detectedText: string, 
+    speakerType?: 'officer' | 'detained'
+  ): LanguageResolutionResult {
+    if (mode.isAuto) {
+      // Use enhanced auto-detection
+      const context: AutoDetectContext = {
+        sourceLanguage: this.currentSourceLanguage,
+        targetLanguage: this.currentTargetLanguage,
+        speakerType
+      };
+      
+      const autoDetectResult = this.autoDetectManager.detectLanguageWithContext(detectedText, context);
+      
       return {
-        sourceLanguage: this.sourceLanguage,
-        targetLanguage: this.targetLanguage,
-        label: `${getLanguageName(this.sourceLanguage)} → ${getLanguageName(this.targetLanguage)} (detected)`
+        sourceLang: autoDetectResult.detectedLanguage,
+        targetLang: autoDetectResult.targetLanguage,
+        confidence: autoDetectResult.confidence,
+        reasoning: autoDetectResult.reasoning,
+        alternatives: autoDetectResult.alternatives?.map(alt => ({
+          source: alt.source,
+          target: alt.target,
+          reasoning: alt.reasoning
+        }))
+      };
+    } else {
+      // Use explicit mode settings
+      return {
+        sourceLang: mode.sourceLang || this.currentSourceLanguage,
+        targetLang: mode.targetLang || this.currentTargetLanguage,
+        confidence: 'high'
       };
     }
-    
-    // If detected language matches target, translate to source
-    if (detectedLang === this.targetLanguage) {
-      return {
-        sourceLanguage: this.targetLanguage,
-        targetLanguage: this.sourceLanguage,
-        label: `${getLanguageName(this.targetLanguage)} → ${getLanguageName(this.sourceLanguage)} (detected)`
-      };
-    }
-    
-    // If detected language is neither source nor target, find best match
-    const detectedLanguage = supportedLanguages.find(lang => lang.code === detectedLang);
-    if (detectedLanguage) {
-      // Prefer translating to source language (usually English for officers)
-      return {
-        sourceLanguage: detectedLang,
-        targetLanguage: this.sourceLanguage,
-        label: `${detectedLanguage.name} → ${getLanguageName(this.sourceLanguage)} (detected)`
-      };
-    }
-    
-    // Fallback to default source-to-target
-    return {
-      sourceLanguage: this.sourceLanguage,
-      targetLanguage: this.targetLanguage,
-      label: `${getLanguageName(this.sourceLanguage)} → ${getLanguageName(this.targetLanguage)} (fallback)`
-    };
   }
 
   /**
-   * Get color theme for language mode display
+   * Get the next mode in the cycle
    */
-  getModeColorTheme(mode: LanguageMode): string {
-    switch (mode) {
-      case 'auto':
-        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/40';
-      case 'source-to-target':
-        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/40';
-      case 'target-to-source':
-        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/40';
-    }
+  getNextMode(currentMode: LanguageMode, availableModes: LanguageMode[]): LanguageMode {
+    const currentIndex = availableModes.findIndex(m => m.id === currentMode.id);
+    const nextIndex = (currentIndex + 1) % availableModes.length;
+    return availableModes[nextIndex];
   }
 
   /**
-   * Update the language settings
+   * Find mode by ID
    */
-  updateLanguages(sourceLanguage: string, targetLanguage: string): LanguageModeManager {
-    return new LanguageModeManager(sourceLanguage, targetLanguage);
+  findModeById(id: string, availableModes: LanguageMode[]): LanguageMode | undefined {
+    return availableModes.find(m => m.id === id);
+  }
+
+  /**
+   * Add conversation entry to auto-detect history
+   */
+  addConversationHistory(language: string, speaker: 'officer' | 'detained'): void {
+    // This would typically be called from the conversation store or record page
+    // For now, we can extend this as needed
+    console.debug('Adding conversation history:', language, speaker);
+  }
+
+  /**
+   * Clear auto-detection history (useful for new sessions)
+   */
+  clearDetectionHistory(): void {
+    this.autoDetectManager.clearHistory();
+  }
+
+  /**
+   * Get detection statistics
+   */
+  getDetectionStats() {
+    return this.autoDetectManager.getDetectionStats();
   }
 }
-
-/**
- * Factory function to create a language mode manager
- */
-export const createLanguageModeManager = (sourceLanguage: string, targetLanguage: string): LanguageModeManager => {
-  return new LanguageModeManager(sourceLanguage, targetLanguage);
-};

@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Mic, MicOff, Languages } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Mic, MicOff } from 'lucide-react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTranslationStore } from '../store/translationStore';
@@ -10,7 +10,8 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TipsPanel } from '../components/TipsPanel';
 import { SpeakerSelector, Speaker } from '../components/SpeakerSelector';
-import { createLanguageModeManager, LanguageMode } from '../services/languageModeService';
+import { LanguageModeSelector } from '../components/LanguageModeSelector';
+import { LanguageModeService, LanguageMode, LanguageResolutionResult } from '../services/languageModeService';
 
 export const RecordPage = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -18,8 +19,9 @@ export const RecordPage = () => {
   const [error, setError] = useState('');
   const [permissionError, setPermissionError] = useState('');
   const [recordedText, setRecordedText] = useState('');
-  const [languageMode, setLanguageMode] = useState<LanguageMode>('auto');
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker>('officer');
+  const [currentModeId, setCurrentModeId] = useState('auto');
+  const [lastDetectionResult, setLastDetectionResult] = useState<LanguageResolutionResult | undefined>();
   
   const { isSupported, startRecognition, stopRecognition } = useSpeechRecognition();
   const { translate } = useTranslation();
@@ -28,14 +30,39 @@ export const RecordPage = () => {
   const { sourceLanguage, targetLanguage } = useAppStore();
   const navigate = useNavigate();
 
-  // Create language mode manager based on current settings
-  const languageModeManager = useMemo(() => 
-    createLanguageModeManager(sourceLanguage, targetLanguage), 
+  // Create language mode service instance
+  const languageModeService = useMemo(() => 
+    new LanguageModeService(sourceLanguage, targetLanguage), 
     [sourceLanguage, targetLanguage]
+  );
+
+  // Update service when languages change
+  useEffect(() => {
+    languageModeService.updateLanguages(sourceLanguage, targetLanguage);
+  }, [sourceLanguage, targetLanguage, languageModeService]);
+
+  // Get available modes
+  const availableModes = useMemo(() => 
+    languageModeService.getAvailableModes(), 
+    [languageModeService]
+  );
+
+  // Get current mode
+  const currentMode = useMemo(() => 
+    languageModeService.findModeById(currentModeId, availableModes) || availableModes[0], 
+    [currentModeId, availableModes, languageModeService]
   );
 
   const getSpeakerContext = (speaker: Speaker) => {
     return speaker === 'officer' ? 'Officer speaking' : 'Detained person speaking';
+  };
+
+  const handleModeChange = (mode: LanguageMode) => {
+    setCurrentModeId(mode.id);
+    // Clear last detection result when switching modes
+    if (!mode.isAuto) {
+      setLastDetectionResult(undefined);
+    }
   };
 
   const handleStartRecording = async () => {
@@ -62,33 +89,42 @@ export const RecordPage = () => {
           return;
         }
 
-        // Use language mode manager to determine translation direction
-        const translationDirection = languageModeManager.getTranslationDirection(languageMode, transcript);
+        // Resolve languages using the enhanced service
+        const resolutionResult = languageModeService.resolveLanguages(
+          currentMode, 
+          transcript, 
+          selectedSpeaker
+        );
+        
+        // Store detection result for feedback
+        setLastDetectionResult(resolutionResult);
+        
+        // Show warning for low confidence auto-detection
+        if (resolutionResult.confidence === 'low' && currentMode.isAuto) {
+          console.warn('Low confidence language detection:', resolutionResult.reasoning);
+        }
         
         setIsTranslating(true);
         try {
           const translationText = await translate(
             transcript, 
-            translationDirection.sourceLanguage, 
-            translationDirection.targetLanguage
+            resolutionResult.sourceLang, 
+            resolutionResult.targetLang
           );
-          
           const translation = {
             originalText: transcript,
             translatedText: translationText,
-            originalLang: translationDirection.sourceLanguage,
-            targetLang: translationDirection.targetLanguage
+            originalLang: resolutionResult.sourceLang,
+            targetLang: resolutionResult.targetLang
           };
           
           setTranslation(translation);
           
           // Add to conversation history with speaker information
-          // Fix: map 'detainee' to 'detained' for conversation store compatibility
-          const conversationSpeaker = selectedSpeaker === 'detainee' ? 'detained' : selectedSpeaker;
           addConversation({
             ...translation,
             source: 'recording',
-            speaker: conversationSpeaker as 'officer' | 'detained'
+            speaker: selectedSpeaker
           });
           
           // Auto-navigate to translation results
@@ -146,21 +182,14 @@ export const RecordPage = () => {
           onSpeakerChange={setSelectedSpeaker}
         />
         
-        {/* Language Mode Toggle */}
-        <div className="flex items-center gap-2">
-          <Languages className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          <button
-            onClick={() => setLanguageMode(languageModeManager.getNextMode(languageMode))}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-              languageModeManager.getModeColorTheme(languageMode)
-            }`}
-          >
-            {languageModeManager.getModeLabel(languageMode)}
-          </button>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            (Tap to cycle modes)
-          </span>
-        </div>
+        {/* Language Mode Toggle with Enhanced Feedback */}
+        <LanguageModeSelector
+          currentMode={currentMode}
+          availableModes={availableModes}
+          onModeChange={handleModeChange}
+          lastDetectionResult={lastDetectionResult}
+          showDetectionFeedback={!!lastDetectionResult && currentMode.isAuto}
+        />
       </div>
 
       {/* Error Messages */}
@@ -227,9 +256,26 @@ export const RecordPage = () => {
                 </div>
               )}
               
-              {!isRecording && languageMode !== 'auto' && (
+              {!isRecording && currentMode.isAuto && (
+                <div className="text-sm text-purple-600 dark:text-purple-400">
+                  Mode: {currentMode.label} • 4 languages supported
+                </div>
+              )}
+              
+              {!isRecording && !currentMode.isAuto && (
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Mode: {languageModeManager.getModeLabel(languageMode)}
+                  Mode: {currentMode.label}
+                </div>
+              )}
+              
+              {/* Detection confidence indicator */}
+              {lastDetectionResult && currentMode.isAuto && !isRecording && (
+                <div className={`text-xs mt-1 ${
+                  lastDetectionResult.confidence === 'high' ? 'text-green-600 dark:text-green-400' :
+                  lastDetectionResult.confidence === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
+                  'text-red-600 dark:text-red-400'
+                }`}>
+                  Last detection: {lastDetectionResult.confidence} confidence
                 </div>
               )}
             </div>
@@ -247,15 +293,16 @@ export const RecordPage = () => {
 
       {/* Tips Panel */}
       <TipsPanel
-        title="Recording Tips"
+        title="Smart Recording Tips"
         color="blue"
         storageKey="recording-tips-dismissed"
         tips={[
-          "Select correct speaker before recording",
-          "Language modes adapt to your Settings preferences",
-          "Auto-detect works across all supported languages",
+          "Select correct speaker before recording for better context",
+          "Auto-detect uses advanced AI to identify 4+ languages",
+          "Watch confidence indicators for detection quality",
+          "Use specific language modes for maximum accuracy",
           "Speak clearly and minimize background noise",
-          "Results automatically appear after translation"
+          "Detection improves with conversation history"
         ]}
       />
     </div>

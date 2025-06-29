@@ -19,6 +19,9 @@ export const QuickPhrasesPage = () => {
   const navigate = useNavigate();
   const phrasesRef = useRef<HTMLDivElement>(null);
 
+  // Debug: Log current language settings
+  console.log('QuickPhrasesPage - Current languages:', { sourceLanguage, targetLanguage });
+
   const filteredCategories = categories.filter(category => {
     if (searchTerm === '') return true;
     
@@ -132,6 +135,11 @@ export const QuickPhrasesPage = () => {
       {/* Header */}
       <div className="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Phrases</h2>
+        
+        {/* Debug: Show current languages */}
+        <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+          Debug: {getLanguageName(sourceLanguage)} → {getLanguageName(targetLanguage)}
+        </div>
         
         {/* Search Bar */}
         <SearchBar
