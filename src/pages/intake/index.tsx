@@ -2,11 +2,9 @@ import React, { useState, useRef } from 'react';
 import { CheckCircle, Save } from 'lucide-react';
 import { intakePhrases, Phrase } from '../../data/phrases';
 import { useTextToSpeech } from '../../hooks/useTextToSpeech';
-import { useTranslationStore } from '../../store/translationStore';
 import { useConversationStore } from '../../store/conversationStore';
 import { useIntakeStore } from '../../store/intakeStore';
 import { useAppStore } from '../../store/appStore';
-import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../../components/SearchBar';
 import { TipsPanel } from '../../components/TipsPanel';
 import { IntakeFormSection } from './IntakeFormSection';
@@ -15,11 +13,9 @@ import { AdditionalPhrasesSection } from './AdditionalPhrasesSection';
 export const IntakePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { speak } = useTextToSpeech();
-  const { setTranslation } = useTranslationStore();
   const { addConversation } = useConversationStore();
   const { isIntakeComplete } = useIntakeStore();
   const { sourceLanguage, targetLanguage } = useAppStore();
-  const navigate = useNavigate();
   const intakeFormRef = useRef<HTMLDetailsElement>(null);
   const additionalPhrasesRef = useRef<HTMLDetailsElement>(null);
 
