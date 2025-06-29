@@ -12,6 +12,15 @@ interface IntakeFormSectionProps {
   onPlayAudio: (text: string, lang: string, phrase: Phrase, e: React.MouseEvent) => void;
 }
 
+// DRY helper to create a mock Phrase object from a question
+const makeMockPhrase = (question: Record<string, string>): Phrase => ({
+  en: question.en,
+  es: question.es,
+  zh: question.zh,
+  ar: question.ar,
+  category: 'intake'
+});
+
 const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>(
   ({ searchTerm, onPlayAudio }, ref) => {
     const { intakeData, updateIntakeData } = useIntakeStore();
@@ -26,7 +35,6 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
     const handlePlayQuestion = (questionKey: IntakeQuestionKey) => {
       const englishText = getQuestionText(intakeQuestions[questionKey], sourceLanguage);
       const targetText = getQuestionText(intakeQuestions[questionKey], targetLanguage);
-      
       addConversation({
         originalText: englishText,
         translatedText: targetText,
@@ -35,16 +43,9 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
         source: 'phrase',
         speaker: 'officer'
       });
-      
-      // Create a mock phrase object for the onPlayAudio handler
+      // Use DRY helper for mockPhrase
       const question = intakeQuestions[questionKey];
-      const mockPhrase: Phrase = { 
-        en: question.en,
-        es: question.es,
-        zh: question.zh,
-        ar: question.ar,
-        category: 'intake' 
-      };
+      const mockPhrase: Phrase = makeMockPhrase(question);
       onPlayAudio(targetText, targetLanguage, mockPhrase, {} as React.MouseEvent);
     };
 
@@ -80,7 +81,11 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 id="identification-question"
                 title={getQuestionText(intakeQuestions.identification, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.identification, targetLanguage)}
-                onPlay={() => handlePlayQuestion('identification')}
+                onPlay={(e) => {
+                  const question = intakeQuestions.identification;
+                  const mockPhrase: Phrase = makeMockPhrase(question);
+                  onPlayAudio(getQuestionText(question, targetLanguage), targetLanguage, mockPhrase, e);
+                }}
                 className='border-b-0'
               />
               <fieldset className="p-4" aria-labelledby="identification-question">
@@ -130,7 +135,11 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 id="name-question"
                 title={getQuestionText(intakeQuestions.name, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.name, targetLanguage)}
-                onPlay={() => handlePlayQuestion('name')}
+                onPlay={(e) => {
+                  const question = intakeQuestions.name;
+                  const mockPhrase: Phrase = makeMockPhrase(question);
+                  onPlayAudio(getQuestionText(question, targetLanguage), targetLanguage, mockPhrase, e);
+                }}
                 className='border-b-0'
               />
               <div className="py-2">
@@ -155,7 +164,11 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 id="country-question"
                 title={getQuestionText(intakeQuestions.country, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.country, targetLanguage)}
-                onPlay={() => handlePlayQuestion('country')}
+                onPlay={(e) => {
+                  const question = intakeQuestions.country;
+                  const mockPhrase: Phrase = makeMockPhrase(question);
+                  onPlayAudio(getQuestionText(question, targetLanguage), targetLanguage, mockPhrase, e);
+                }}
                 className='border-b-0'
               />
               <div className="py-2">
@@ -181,7 +194,11 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   id="passport-question"
                   title={getQuestionText(intakeQuestions.passport, sourceLanguage)}
                   subtitle={getQuestionText(intakeQuestions.passport, targetLanguage)}
-                  onPlay={() => handlePlayQuestion('passport')}
+                  onPlay={(e) => {
+                    const question = intakeQuestions.passport;
+                    const mockPhrase: Phrase = makeMockPhrase(question);
+                    onPlayAudio(getQuestionText(question, targetLanguage), targetLanguage, mockPhrase, e);
+                  }}
                   className='border-b-0'
                 />
                 <div className="py-2">

@@ -4,7 +4,7 @@ import { Volume2 } from 'lucide-react';
 interface PlayTranslationCardProps {
   title: string;
   subtitle: string;
-  onPlay: () => void;
+  onPlay: (e: React.MouseEvent) => void;
   className?: string;
   id?: string; // Add optional id prop for accessibility associations
 }
@@ -26,7 +26,7 @@ export const PlayTranslationCard: React.FC<PlayTranslationCardProps> = ({
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onPlay();
+    onPlay(e);
   };
 
   return (
