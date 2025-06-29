@@ -1,4 +1,12 @@
 export const useTranslation = () => {
+  // Language code mapping for APIs
+  const languageMap: Record<string, string> = {
+    'en': 'en',
+    'es': 'es', 
+    'zh': 'zh',
+    'ar': 'ar'
+  };
+
   const mockTranslations: Record<string, string> = {
     // English to Spanish
     'hello': 'hola',
@@ -72,7 +80,79 @@ export const useTranslation = () => {
   };
 
   const translate = async (text: string, fromLang: string, toLang: string): Promise<string> => {
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Don't translate if source and target are the same
+    if (fromLang === toLang) {
+      return text;
+    }
+
+    try {
+      // Try LibreTranslate first (free, open source, privacy-focused)
+      const libreResult = await translateWithLibreTranslate(text, fromLang, toLang);
+      if (libreResult) return libreResult;
+      
+      // Fallback to MyMemory (free, no API key required) 
+      const myMemoryResult = await translateWithMyMemory(text, fromLang, toLang);
+      if (myMemoryResult) return myMemoryResult;
+      
+      // Final fallback to mock translations
+      return translateWithMock(text, fromLang, toLang);
+      
+    } catch (error) {
+      console.warn('Translation API failed, using mock translation:', error);
+      return translateWithMock(text, fromLang, toLang);
+    }
+  };
+
+  // LibreTranslate API (completely free, open source)
+  const translateWithLibreTranslate = async (text: string, fromLang: string, toLang: string): Promise<string | null> => {
+    try {
+      const response = await fetch('https://translate.argosopentech.com/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          q: text,
+          source: languageMap[fromLang] || fromLang,
+          target: languageMap[toLang] || toLang,
+          format: 'text'
+        })
+      });
+
+      if (!response.ok) throw new Error(`LibreTranslate error: ${response.status}`);
+      
+      const data = await response.json();
+      return data.translatedText || null;
+    } catch (error) {
+      console.warn('LibreTranslate failed:', error);
+      return null;
+    }
+  };
+
+  // MyMemory API (free, no API key required)
+  const translateWithMyMemory = async (text: string, fromLang: string, toLang: string): Promise<string | null> => {
+    try {
+      const sourceLang = languageMap[fromLang] || fromLang;
+      const targetLang = languageMap[toLang] || toLang;
+      
+      const response = await fetch(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`
+      );
+
+      if (!response.ok) throw new Error(`MyMemory error: ${response.status}`);
+      
+      const data = await response.json();
+      return data.responseData?.translatedText || null;
+    } catch (error) {
+      console.warn('MyMemory failed:', error);
+      return null;
+    }
+  };
+
+  // Mock translation fallback
+  const translateWithMock = async (text: string, fromLang: string, toLang: string): Promise<string> => {
+    // Add small delay to simulate API call
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     const lowerText = text.toLowerCase().trim();
     
