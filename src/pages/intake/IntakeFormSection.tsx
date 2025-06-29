@@ -75,95 +75,146 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
         <div className="border-t border-gray-100 dark:border-gray-700">
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {/* Identification Status Card */}
+            <div>
               <PlayTranslationCard
+                id="identification-question"
                 title={getQuestionText(intakeQuestions.identification, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.identification, targetLanguage)}
                 onPlay={() => handlePlayQuestion('identification')}
                 className='border-b-0'
               />
-              <div className="p-4 flex gap-3 border-none">
-                <button
-                  onClick={() => updateIntakeData({ hasIdentification: true })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    intakeData.hasIdentification === true
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-500'
-                  }`}
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => updateIntakeData({ hasIdentification: false })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    intakeData.hasIdentification === false
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-500'
-                  }`}
-                >
-                  No
-                </button>
-              </div>
+              <fieldset className="p-4" aria-labelledby="identification-question">
+                <legend className="sr-only">Do you have identification?</legend>
+                <div className="flex gap-3">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="hasIdentification"
+                      value="true"
+                      checked={intakeData.hasIdentification === true}
+                      onChange={() => updateIntakeData({ hasIdentification: true })}
+                      className="sr-only"
+                    />
+                    <span className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 ${
+                      intakeData.hasIdentification === true
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-500'
+                    }`}>
+                      Yes
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="hasIdentification"
+                      value="false"
+                      checked={intakeData.hasIdentification === false}
+                      onChange={() => updateIntakeData({ hasIdentification: false })}
+                      className="sr-only"
+                    />
+                    <span className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 ${
+                      intakeData.hasIdentification === false
+                        ? 'bg-red-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-500'
+                    }`}>
+                      No
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
 
             {/* Name Card */}
+            <div>
               <PlayTranslationCard
+                id="name-question"
                 title={getQuestionText(intakeQuestions.name, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.name, targetLanguage)}
                 onPlay={() => handlePlayQuestion('name')}
                 className='border-b-0'
               />
-              <input
-                type="text"
-                value={intakeData.name}
-                onChange={(e) => updateIntakeData({ name: e.target.value })}
-                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
-                placeholder="Enter full name"
-              />
+              <div className="px-4 pb-4">
+                <label htmlFor="name-input" className="sr-only">
+                  Enter your full name
+                </label>
+                <input
+                  id="name-input"
+                  type="text"
+                  value={intakeData.name}
+                  onChange={(e) => updateIntakeData({ name: e.target.value })}
+                  aria-labelledby="name-question"
+                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                  placeholder="Enter full name"
+                />
+              </div>
+            </div>
 
             {/* Country Card */}
+            <div>
               <PlayTranslationCard
+                id="country-question"
                 title={getQuestionText(intakeQuestions.country, sourceLanguage)}
                 subtitle={getQuestionText(intakeQuestions.country, targetLanguage)}
                 onPlay={() => handlePlayQuestion('country')}
                 className='border-b-0'
               />
-              <input
-                type="text"
-                value={intakeData.country}
-                onChange={(e) => updateIntakeData({ country: e.target.value })}
-                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
-                placeholder="Enter country of citizenship"
-              />
+              <div className="px-4 pb-4">
+                <label htmlFor="country-input" className="sr-only">
+                  Enter your country of citizenship
+                </label>
+                <input
+                  id="country-input"
+                  type="text"
+                  value={intakeData.country}
+                  onChange={(e) => updateIntakeData({ country: e.target.value })}
+                  aria-labelledby="country-question"
+                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                  placeholder="Enter country of citizenship"
+                />
+              </div>
+            </div>
 
             {/* Passport Number Card (conditional) */}
             {intakeData.hasIdentification === true && (
-              <>
+              <div>
                 <PlayTranslationCard
+                  id="passport-question"
                   title={getQuestionText(intakeQuestions.passport, sourceLanguage)}
                   subtitle={getQuestionText(intakeQuestions.passport, targetLanguage)}
                   onPlay={() => handlePlayQuestion('passport')}
                   className='border-b-0'
                 />
-                <input
-                  type="text"
-                  value={intakeData.passportNumber}
-                  onChange={(e) => updateIntakeData({ passportNumber: e.target.value })}
-                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
-                  placeholder="Enter passport or ID number"
-                />
-              </>
+                <div className="px-4 pb-4">
+                  <label htmlFor="passport-input" className="sr-only">
+                    Enter your passport or ID number
+                  </label>
+                  <input
+                    id="passport-input"
+                    type="text"
+                    value={intakeData.passportNumber}
+                    onChange={(e) => updateIntakeData({ passportNumber: e.target.value })}
+                    aria-labelledby="passport-question"
+                    className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                    placeholder="Enter passport or ID number"
+                  />
+                </div>
+              </div>
             )}
 
             {/* Additional Information */}
-              <label className="block pt-4 font-medium text-gray-900 dark:text-gray-100">
-                <span className="px-4">Additional Information</span>
-                <textarea
+            <div className="p-4">
+              <label htmlFor="additional-info" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Additional Information
+              </label>
+              <textarea
+                id="additional-info"
                 value={intakeData.additionalInfo}
                 onChange={(e) => updateIntakeData({ additionalInfo: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white my-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 placeholder="Any additional notes or information"
               />
-              </label>
+            </div>
           </div>
         </div>
       </details>

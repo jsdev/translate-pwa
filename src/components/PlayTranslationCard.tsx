@@ -6,13 +6,15 @@ interface PlayTranslationCardProps {
   subtitle: string;
   onPlay: () => void;
   className?: string;
+  id?: string; // Add optional id prop for accessibility associations
 }
 
 export const PlayTranslationCard: React.FC<PlayTranslationCardProps> = ({
   title,
   subtitle,
   onPlay,
-  className = ''
+  className = '',
+  id
 }) => {
   const handleCardClick = (e: React.MouseEvent) => {
     // Find the play button within the card and trigger its click
@@ -34,7 +36,7 @@ export const PlayTranslationCard: React.FC<PlayTranslationCardProps> = ({
     >
       <div className="flex items-center justify-between">
         <div className="flex-1 pr-4">
-          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+          <h4 id={id} className="font-medium text-gray-900 dark:text-gray-100 mb-1">
             {title}
           </h4>
           <p className="text-sm text-gray-700 dark:text-gray-300">
