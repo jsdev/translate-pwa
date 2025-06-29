@@ -1,4 +1,4 @@
-import { Volume2, RotateCcw, Copy } from 'lucide-react';
+import { Volume2, Mic, Copy } from 'lucide-react';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useTranslationStore } from '../store/translationStore';
 import { getLanguageName } from '../config/languages';
@@ -16,19 +16,6 @@ export const TranslationPage = () => {
       await navigator.clipboard.writeText(text);
     } catch (err) {
       console.error('Failed to copy text:', err);
-    }
-  };
-
-  const handleSwapLanguages = () => {
-    if (translation) {
-      useTranslationStore.setState({
-        translation: {
-          originalText: translation.translatedText,
-          translatedText: translation.originalText,
-          originalLang: translation.targetLang,
-          targetLang: translation.originalLang
-        }
-      });
     }
   };
 
@@ -55,19 +42,11 @@ export const TranslationPage = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Translation Result</h2>
           <div className="flex gap-2">
-            <button
-              onClick={handleSwapLanguages}
-              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              title="Swap languages"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
-            <button
-              onClick={clearTranslation}
+            <a href='/record'
               className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
             >
-              Clear
-            </button>
+              <Mic className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </div>
