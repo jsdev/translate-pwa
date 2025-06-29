@@ -25,10 +25,14 @@ export const LanguageSelector = ({
         <select
           value={selectedLanguage}
           onChange={(e) => onLanguageChange(e.target.value)}
-          className="w-full appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+          className="w-full appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white [&>option]:bg-white [&>option]:dark:bg-gray-800 [&>option]:text-gray-900 [&>option]:dark:text-white [&>option]:py-2"
         >
           {supportedLanguages.map((language) => (
-            <option key={language.code} value={language.code}>
+            <option 
+              key={language.code} 
+              value={language.code}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white py-2"
+            >
               {getLanguageFlag(language.code)} {getLanguageNativeName(language.code)} ({language.name})
             </option>
           ))}

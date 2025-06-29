@@ -44,7 +44,9 @@ export const QuickPhrasesPage = () => {
   };
 
   const getPhraseText = (phrase: Phrase, langCode: string): string => {
-    return phrase[langCode as keyof Phrase] as string || phrase.en;
+    // Type assertion to safely access phrase properties
+    const text = phrase[langCode as keyof Omit<Phrase, 'category'>];
+    return typeof text === 'string' ? text : phrase.en;
   };
 
   const handleScrollToPhrases = () => {

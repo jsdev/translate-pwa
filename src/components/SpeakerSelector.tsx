@@ -13,9 +13,13 @@ export const SpeakerSelector: React.FC<SpeakerSelectorProps> = ({
   onSpeakerChange
 }) => {
   return (
-    <fieldset className="mb-4">
-      <legend className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2">Speaker</legend>
-      <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1" role="radiogroup">
+    <fieldset className="mb-4 grid grid-cols-[auto_1fr] gap-4 items-center">
+    <legend class="sr-only">Speaker</legend>
+  <div class="grid grid-cols-[auto_1fr] gap-4 items-center">
+    <span aria-hidden="true" class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+      Speaker
+    </span>
+      <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 col-start-2" role="radiogroup">
         <div className="relative">
           <input
             type="radio"
@@ -60,6 +64,7 @@ export const SpeakerSelector: React.FC<SpeakerSelectorProps> = ({
             Detainee
           </label>
         </div>
+      </div>
       </div>
     </fieldset>
   );

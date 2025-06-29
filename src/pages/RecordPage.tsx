@@ -1,17 +1,16 @@
-import React, {useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Mic, MicOff, Languages } from 'lucide-react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { useTranslation } from '../hooks/useTranslation';
-import { languageUtils } from '../utils/languageUtils';
 import { useTranslationStore } from '../store/translationStore';
 import { useConversationStore } from '../store/conversationStore';
+import { useAppStore } from '../store/appStore';
 import { useNavigate } from 'react-router-dom';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TipsPanel } from '../components/TipsPanel';
 import { SpeakerSelector, Speaker } from '../components/SpeakerSelector';
-
-type LanguageMode = 'auto' | 'en' | 'es';
+import { createLanguageModeManager, LanguageMode } from '../services/languageModeService';
 
 export const RecordPage = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -26,23 +25,14 @@ export const RecordPage = () => {
   const { translate } = useTranslation();
   const { setTranslation } = useTranslationStore();
   const { addConversation } = useConversationStore();
+  const { sourceLanguage, targetLanguage } = useAppStore();
   const navigate = useNavigate();
 
-  const getLanguageModeLabel = (mode: LanguageMode) => {
-    switch (mode) {
-      case 'auto': return 'Auto Detect';
-      case 'en': return 'English → Spanish';
-      case 'es': return 'Spanish → English';
-    }
-  };
-
-  const getNextLanguageMode = (current: LanguageMode): LanguageMode => {
-    switch (current) {
-      case 'auto': return 'en';
-      case 'en': return 'es';
-      case 'es': return 'auto';
-    }
-  };
+  // Create language mode manager based on current settings
+  const languageModeManager = useMemo(() => 
+    createLanguageModeManager(sourceLanguage, targetLanguage), 
+    [sourceLanguage, targetLanguage]
+  );
 
   const getSpeakerContext = (speaker: Speaker) => {
     return speaker === 'officer' ? 'Officer speaking' : 'Detained person speaking';
@@ -72,38 +62,33 @@ export const RecordPage = () => {
           return;
         }
 
-        let detectedLang: string;
-        let targetLanguage: string;
-
-        // Determine source and target languages based on mode
-        if (languageMode === 'auto') {
-          detectedLang = languageUtils.detectLanguage(transcript);
-          targetLanguage = detectedLang === 'en' ? 'es' : 'en';
-        } else if (languageMode === 'en') {
-          detectedLang = 'en';
-          targetLanguage = 'es';
-        } else {
-          detectedLang = 'es';
-          targetLanguage = 'en';
-        }
+        // Use language mode manager to determine translation direction
+        const translationDirection = languageModeManager.getTranslationDirection(languageMode, transcript);
         
         setIsTranslating(true);
         try {
-          const translationText = await translate(transcript, detectedLang, targetLanguage);
+          const translationText = await translate(
+            transcript, 
+            translationDirection.sourceLanguage, 
+            translationDirection.targetLanguage
+          );
+          
           const translation = {
             originalText: transcript,
             translatedText: translationText,
-            originalLang: detectedLang,
-            targetLang: targetLanguage
+            originalLang: translationDirection.sourceLanguage,
+            targetLang: translationDirection.targetLanguage
           };
           
           setTranslation(translation);
           
           // Add to conversation history with speaker information
+          // Fix: map 'detainee' to 'detained' for conversation store compatibility
+          const conversationSpeaker = selectedSpeaker === 'detainee' ? 'detained' : selectedSpeaker;
           addConversation({
             ...translation,
             source: 'recording',
-            speaker: selectedSpeaker
+            speaker: conversationSpeaker as 'officer' | 'detained'
           });
           
           // Auto-navigate to translation results
@@ -165,16 +150,12 @@ export const RecordPage = () => {
         <div className="flex items-center gap-2">
           <Languages className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           <button
-            onClick={() => setLanguageMode(getNextLanguageMode(languageMode))}
+            onClick={() => setLanguageMode(languageModeManager.getNextMode(languageMode))}
             className={`px-3 py-1 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-              languageMode === 'auto' 
-                ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/40' 
-                : languageMode === 'en'
-                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/40'
-                : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/40'
+              languageModeManager.getModeColorTheme(languageMode)
             }`}
           >
-            {getLanguageModeLabel(languageMode)}
+            {languageModeManager.getModeLabel(languageMode)}
           </button>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             (Tap to cycle modes)
@@ -248,7 +229,7 @@ export const RecordPage = () => {
               
               {!isRecording && languageMode !== 'auto' && (
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Mode: {getLanguageModeLabel(languageMode)}
+                  Mode: {languageModeManager.getModeLabel(languageMode)}
                 </div>
               )}
             </div>
@@ -271,8 +252,8 @@ export const RecordPage = () => {
         storageKey="recording-tips-dismissed"
         tips={[
           "Select correct speaker before recording",
-          "Officers can use any language mode for Spanglish",
-          "Auto-detect works best for mixed conversations",
+          "Language modes adapt to your Settings preferences",
+          "Auto-detect works across all supported languages",
           "Speak clearly and minimize background noise",
           "Results automatically appear after translation"
         ]}
