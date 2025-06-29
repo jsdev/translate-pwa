@@ -145,7 +145,7 @@ export const SettingsPage: React.FC = () => {
               
               {/* Voice Diagnostics Button */}
               <button
-                onClick={() => navigate('/voice-diagnostics')}
+                onClick={() => navigate('/voice-diagnostics', { replace: true })}
                 className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600 text-left"
               >
                 <div className="flex items-center gap-3">

@@ -25,7 +25,7 @@ export const VoiceDiagnosticsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/settings');
+    navigate('/settings', { replace: true });
   };
 
   // Detect platform for specific instructions
