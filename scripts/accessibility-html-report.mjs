@@ -145,7 +145,7 @@ const masterHtmlReport = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE/CBP Translation Tool - Accessibility Report</title>
+    <title>DHS Translation Tool - Accessibility Report</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 2rem; }
         .header { background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
@@ -171,7 +171,7 @@ const masterHtmlReport = `
 </head>
 <body>
     <div class="header">
-        <h1>🏛️ ICE/CBP Translation Tool</h1>
+        <h1>🏛️ DHS Translation Tool</h1>
         <p>Accessibility Compliance Report - Government Ready</p>
         <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
     </div>

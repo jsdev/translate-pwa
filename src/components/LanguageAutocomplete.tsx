@@ -37,34 +37,13 @@ export const LanguageAutocomplete = ({
             .includes(query.toLowerCase())
         );
 
-  const selectedLanguageObj = availableLanguages.find(lang => lang.code === selectedLanguage);
-
-  const getLanguageBackgroundColor = (language: Language, _isSelected: boolean, isActive: boolean) => {
+  const getLanguageBackgroundColor = (_language: Language, _isSelected: boolean, isActive: boolean) => {
     const baseClasses = 'relative cursor-default select-none py-3 pl-10 pr-4 transition-colors text-left';
     
-    // Language-specific background colors with proper text color inheritance
-    let colorClasses = '';
-    switch (language.code) {
-      case 'es':
-        colorClasses = isActive 
-          ? 'bg-green-100 dark:bg-green-900/30' 
-          : 'bg-green-50 dark:bg-green-900/20';
-        break;
-      case 'zh':
-        colorClasses = isActive 
-          ? 'bg-red-100 dark:bg-red-900/30' 
-          : 'bg-red-50 dark:bg-red-900/20';
-        break;
-      case 'ar':
-        colorClasses = isActive 
-          ? 'bg-yellow-100 dark:bg-yellow-900/30' 
-          : 'bg-yellow-50 dark:bg-yellow-900/20';
-        break;
-      default:
-        colorClasses = isActive 
-          ? 'bg-gray-100 dark:bg-gray-700' 
-          : 'bg-white dark:bg-gray-800';
-    }
+    // Simple, consistent styling without language-specific colors
+    const colorClasses = isActive 
+      ? 'bg-gray-100 dark:bg-gray-700' 
+      : 'bg-white dark:bg-gray-800';
 
     // Text color inherits from theme
     const textColor = 'text-gray-900 dark:text-gray-100';
@@ -72,19 +51,9 @@ export const LanguageAutocomplete = ({
     return `${baseClasses} ${colorClasses} ${textColor}`;
   };
 
-  const getSelectedButtonColor = (language: Language | undefined) => {
-    if (!language) return 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600';
-    
-    switch (language.code) {
-      case 'es':
-        return 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600';
-      case 'zh':
-        return 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-600';
-      case 'ar':
-        return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-600';
-      default:
-        return 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600';
-    }
+  const getSelectedButtonColor = () => {
+    // Simple, consistent styling for all languages
+    return 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600';
   };
 
   return (
@@ -96,7 +65,7 @@ export const LanguageAutocomplete = ({
               {label}
             </Combobox.Label>
             <Combobox.Input
-              className={`relative w-full cursor-default rounded-lg border py-3 pl-4 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors text-gray-900 dark:text-gray-100 ${getSelectedButtonColor(selectedLanguageObj)}`}
+              className={`relative w-full cursor-default rounded-lg border py-3 pl-4 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors text-gray-900 dark:text-gray-100 ${getSelectedButtonColor()}`}
               displayValue={(languageCode: string) => {
                 const language = availableLanguages.find(lang => lang.code === languageCode);
                 return language ? `${language.name} (${language.nativeName})` : '';
@@ -180,7 +149,7 @@ export const LanguageAutocomplete = ({
       
       {/* Helper text */}
       <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-        Select the primary language for the detained person
+        Select the language for translation
         {selectedLanguage === 'es' && (
           <span className="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
             Default

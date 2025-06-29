@@ -44,7 +44,7 @@ export const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectio
       }
     };
 
-    const getQuestionText = (question: any, langCode: string): string => {
+    const getQuestionText = (question: Record<string, string>, langCode: string): string => {
       return question[langCode] || question.en; // Fallback to English
     };
 

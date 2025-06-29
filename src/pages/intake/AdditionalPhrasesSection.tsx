@@ -16,7 +16,7 @@ export const AdditionalPhrasesSection = forwardRef<HTMLDetailsElement, Additiona
     
     // Helper function to get phrase text in the specified language
     const getPhraseText = (phrase: Phrase, langCode: string): string => {
-      const text = (phrase as any)[langCode];
+      const text = (phrase as unknown as Record<string, unknown>)[langCode];
       return typeof text === 'string' ? text : phrase.en; // Fallback to English
     };
 

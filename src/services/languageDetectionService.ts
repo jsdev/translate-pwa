@@ -177,7 +177,7 @@ export class LanguageDetectionService {
       };
     }
 
-    const results: Array<{ language: string; score: number; details: any }> = [];
+    const results: Array<{ language: string; score: number; details: Record<string, unknown> }> = [];
 
     for (const pattern of this.patterns) {
       let score = 0;

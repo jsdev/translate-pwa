@@ -29,10 +29,9 @@ export function MobileHeader() {
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Languages className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <Languages className="w-6 h-6 text-gray-600 dark:text-gray-400" />
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">ICE/CBP Translate</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Translation Tool</p>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">DHS Translate</h1>
           </div>
         </div>
         
@@ -52,7 +51,7 @@ export function MobileHeader() {
           <div className="flex items-center gap-1">
             {isOnline ? (
               <div 
-                className="flex items-center gap-1 text-green-700 dark:text-green-300"
+                className="flex items-center gap-1 text-gray-600 dark:text-gray-400"
                 role="status"
                 aria-label="Connection status: Online"
               >
@@ -60,7 +59,7 @@ export function MobileHeader() {
               </div>
             ) : (
               <div 
-                className="flex items-center gap-1 text-red-700 dark:text-red-300"
+                className="flex items-center gap-1 text-gray-600 dark:text-gray-400"
                 role="status"
                 aria-label="Connection status: Offline"
               >

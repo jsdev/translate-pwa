@@ -73,7 +73,7 @@ async function generateSummaryReport() {
   const reportHeader = `
 # 🏆 Lighthouse Audit Results
 
-## ICE/CBP Translation Tool - Route Performance Analysis
+## DHS Translation Tool - Route Performance Analysis
 
 Generated: ${new Date().toISOString()}
 

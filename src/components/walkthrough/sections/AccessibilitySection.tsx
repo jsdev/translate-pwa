@@ -8,25 +8,24 @@ export const AccessibilitySection: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Comprehensive Accessibility Strategy</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Accessibility Features</h3>
         
         <div className="space-y-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Semantic HTML Foundation</h4>
-            <ul className="space-y-1 text-blue-800 dark:text-blue-200 text-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Semantic HTML Foundation</h4>
+            <ul className="space-y-1 text-gray-700 dark:text-gray-300 text-sm">
               <li>• Search forms use proper <code>role="search"</code> landmarks</li>
               <li>• All regions properly labeled for screen readers</li>
               <li>• Native <code>details/summary</code> elements for keyboard navigation</li>
-              <li>• <strong>Radio inputs for theme selection</strong> - native checked state without state management</li>
-              <li>• <strong>Checkbox inputs for toggles</strong> - proper labels with <code>htmlFor</code> associations</li>
-              <li>• <strong>Fieldset/legend grouping</strong> - logical form control organization</li>
+              <li>• Radio inputs for theme selection with native checked state</li>
+              <li>• Checkbox inputs for toggles with proper labels</li>
               <li>• Form labels properly associated with inputs via unique IDs</li>
             </ul>
           </div>
           
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-            <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">Multi-Modal Communication</h4>
-            <ul className="space-y-1 text-green-800 dark:text-green-200 text-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Multi-Modal Communication</h4>
+            <ul className="space-y-1 text-gray-700 dark:text-gray-300 text-sm">
               <li>• Visual text display with high contrast ratios</li>
               <li>• Audio playback for all content</li>
               <li>• Speaker identification with visual and auditory cues</li>
@@ -34,16 +33,14 @@ export const AccessibilitySection: React.FC = () => {
             </ul>
           </div>
           
-          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-            <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Keyboard & Focus Management</h4>
-            <ul className="space-y-1 text-purple-800 dark:text-purple-200 text-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Keyboard & Focus Management</h4>
+            <ul className="space-y-1 text-gray-700 dark:text-gray-300 text-sm">
               <li>• Full keyboard navigation support</li>
-              <li>• Visible focus indicators throughout with <code>focus-visible</code></li>
-              <li>• <strong>Focus-within styling</strong> for better visual feedback on complex controls</li>
-              <li>• <strong>Screen reader only content</strong> with <code>sr-only</code> class for hidden inputs</li>
+              <li>• Visible focus indicators throughout</li>
+              <li>• Screen reader content with proper ARIA labels</li>
               <li>• Logical tab order and focus flow</li>
               <li>• Escape key support for dismissible elements</li>
-              <li>• <strong>Descriptive aria-labels</strong> for toggle actions (Enable/Disable)</li>
             </ul>
           </div>
         </div>

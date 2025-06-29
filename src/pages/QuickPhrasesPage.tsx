@@ -201,7 +201,7 @@ export const QuickPhrasesPage = () => {
                           </div>
                           <button
                             onClick={(e) => handlePlayAudio(getPhraseText(phrase, sourceLanguage), sourceLanguage, phrase, e)}
-                            className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
                             title={`Play ${getLanguageName(sourceLanguage)} audio`}
                           >
                             <Volume2 className="w-4 h-4" />
@@ -216,7 +216,7 @@ export const QuickPhrasesPage = () => {
                           </div>
                           <button
                             onClick={(e) => handlePlayAudio(getPhraseText(phrase, targetLanguage), targetLanguage, phrase, e)}
-                            className="p-2 text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
                             title={`Play ${getLanguageName(targetLanguage)} audio`}
                           >
                             <Volume2 className="w-4 h-4" />

@@ -1,7 +1,7 @@
 {
-  "name": "ICE/CBP Translation Tool - Secure Law Enforcement Communication",
+  "name": "DHS Translation Tool - Secure Law Enforcement Communication",
   "short_name": "ICE Translate",
-  "description": "Government-compliant translation application for ICE/CBP law enforcement personnel. Features real-time translation, accessibility compliance, and secure communication protocols.",
+  "description": "Government-compliant translation application for DHS law enforcement personnel. Features real-time translation, accessibility compliance, and secure communication protocols.",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#2563EB",
@@ -17,7 +17,7 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "form_factor": "wide",
-      "label": "ICE/CBP Translation Tool interface"
+      "label": "DHS Translation Tool interface"
     }
   ],
   "icons": [

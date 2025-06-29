@@ -1,6 +1,6 @@
 # 🚀 GitHub Pages Setup Guide
 
-This guide walks you through setting up GitHub Pages deployment for the ICE/CBP Translation Tool to achieve government-grade accessibility and performance standards.
+This guide walks you through setting up GitHub Pages deployment for the DHS Translation Tool to achieve government-grade accessibility and performance standards.
 
 ## 📋 Prerequisites
 
@@ -99,7 +99,7 @@ git push origin main
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ICE/CBP Translation Tool</title>
+  <title>DHS Translation Tool</title>
   <script>
     // Redirect to index.html with the path as a query parameter for SPA routing
     const path = window.location.pathname.replace('/translate-pwa', '');

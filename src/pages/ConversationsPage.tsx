@@ -71,9 +71,9 @@ export const ConversationsPage = () => {
 
   const getSpeakerIcon = (speaker?: 'officer' | 'detained') => {
     if (speaker === 'officer') {
-      return <UserCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
+      return <UserCheck className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
     } else if (speaker === 'detained') {
-      return <User className="w-4 h-4 text-orange-600 dark:text-orange-400" />;
+      return <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
     }
     return null;
   };
@@ -160,7 +160,7 @@ export const ConversationsPage = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded font-medium">
+                    <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded font-medium">
                       {getConversationType(conversation.originalLang, conversation.targetLang)}
                     </span>
                     {conversation.speaker && (
@@ -186,7 +186,7 @@ export const ConversationsPage = () => {
                     </div>
                     <button
                       onClick={() => handlePlayAudio(conversation.originalText, conversation.originalLang)}
-                      className="p-1 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
                       title="Play original audio"
                     >
                       <Volume2 className="w-4 h-4" />
@@ -205,7 +205,7 @@ export const ConversationsPage = () => {
                     </div>
                     <button
                       onClick={() => handlePlayAudio(conversation.translatedText, conversation.targetLang)}
-                      className="p-1 text-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                      className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
                       title="Play translated audio"
                     >
                       <Volume2 className="w-4 h-4" />
