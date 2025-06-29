@@ -133,7 +133,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 onPlay={() => handlePlayQuestion('name')}
                 className='border-b-0'
               />
-              <div className="px-4 pb-4">
+              <div className="py-2">
                 <label htmlFor="name-input" className="sr-only">
                   Enter your full name
                 </label>
@@ -158,7 +158,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 onPlay={() => handlePlayQuestion('country')}
                 className='border-b-0'
               />
-              <div className="px-4 pb-4">
+              <div className="py-2">
                 <label htmlFor="country-input" className="sr-only">
                   Enter your country of citizenship
                 </label>
@@ -184,7 +184,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   onPlay={() => handlePlayQuestion('passport')}
                   className='border-b-0'
                 />
-                <div className="px-4 pb-4">
+                <div className="py-2">
                   <label htmlFor="passport-input" className="sr-only">
                     Enter your passport or ID number
                   </label>
@@ -202,16 +202,16 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
             )}
 
             {/* Additional Information */}
-            <div className="p-4">
-              <label htmlFor="additional-info" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Additional Information
+            <div className="divide-y">
+              <label htmlFor="additional-info" className="block font-medium text-gray-900 dark:text-gray-100 mt-4 mb-1">
+                <span className="px-4">Additional Information</span>
               </label>
               <textarea
                 id="additional-info"
                 value={intakeData.additionalInfo}
                 onChange={(e) => updateIntakeData({ additionalInfo: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="w-full px-4 py-2 border border-none bg-transparent text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 placeholder="Any additional notes or information"
               />
             </div>
