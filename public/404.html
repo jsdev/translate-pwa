@@ -4,20 +4,10 @@
   <meta charset="utf-8">
   <title>DHS Translation Tool</title>
   <script>
-    // GitHub Pages SPA redirect for /translate-pwa/ subdirectory
-    // This script redirects all routes to index.html with the route as a query parameter
-    const pathSegmentsToKeep = 2; // Keep "translate-pwa" + one more segment for proper routing
-    const l = window.location;
-    
-    // Only redirect if we're not already at the root index
+    // Simple SPA redirect for GitHub Pages: always redirect to index.html
+    var l = window.location;
     if (l.pathname !== '/translate-pwa/' && l.pathname !== '/translate-pwa/index.html') {
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        '/translate-pwa/?/' +
-        l.pathname.slice('/translate-pwa/'.length).replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      l.replace('/translate-pwa/index.html');
     }
   </script>
 </head>
