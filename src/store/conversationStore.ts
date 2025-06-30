@@ -9,7 +9,7 @@ export interface ConversationEntry {
   targetLang: string;
   timestamp: number;
   source: 'phrase' | 'recording';
-  speaker?: 'officer' | 'detained';
+  speaker?: 'officer' | 'civilian' | 'detained'; // Accept legacy 'detained' for compatibility
 }
 
 interface ConversationStore {

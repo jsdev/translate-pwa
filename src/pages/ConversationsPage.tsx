@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Volume2, Calendar, Clock, User, UserCheck } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { PlayTranslationCard } from '../components/PlayTranslationCard';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 import { useConversationStore } from '../store/conversationStore';
 import { SearchBar } from '../components/SearchBar';
@@ -88,18 +89,9 @@ export const ConversationsPage = () => {
     return 'Translation';
   };
 
-  const getSpeakerIcon = (speaker?: 'officer' | 'detained') => {
-    if (speaker === 'officer') {
-      return <UserCheck className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
-    } else if (speaker === 'detained') {
-      return <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
-    }
-    return null;
-  };
-
-  const getSpeakerLabel = (speaker?: 'officer' | 'detained') => {
+  const getSpeakerLabel = (speaker?: 'officer' | 'civilian') => {
     if (speaker === 'officer') return 'Officer';
-    if (speaker === 'detained') return 'Detained';
+    if (speaker === 'civilian' || speaker === 'detained') return 'Civilian';
     return 'Unknown';
   };
 
@@ -176,72 +168,21 @@ export const ConversationsPage = () => {
                 key={conversation.id}
                 className="bg-white dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
               >
-                {/* Header */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-700 dark:text-gray-300 px-2 py-1 rounded font-medium">
-                      {getConversationType(conversation.originalLang, conversation.targetLang)}
-                    </span>
-                    {conversation.speaker && (
-                      <div className="flex items-center gap-1">
-                        {getSpeakerIcon(conversation.speaker)}
-                        <span className="text-xs text-gray-600 dark:text-gray-400">
-                          {getSpeakerLabel(conversation.speaker)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                      <Clock className="w-3 h-3" />
-                      <span className="text-xs">{formatTime(conversation.timestamp)}</span>
-                    </div>
-                  </div>
+                {/* Combined Info Line */}
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  <span>{conversation.source === 'phrase' ? 'Quick Phrase' : 'Voice Recording'}</span>
+                  {conversation.speaker && (
+                    <span>• {getSpeakerLabel(conversation.speaker)}</span>
+                  )}
+                  <span>• {formatTime(conversation.timestamp)}</span>
                 </div>
-
-                {/* Original Text */}
-                <div className="mb-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {conversation.originalLang === 'en' ? 'English' : 'Español'}
-                    </div>
-                    <button
-                      onClick={() => handlePlayAudio(conversation.originalText, conversation.originalLang)}
-                      className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
-                      title="Play original audio"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-gray-50 dark:bg-gray-700 p-2">
-                    {conversation.originalText}
-                  </div>
-                </div>
-
-                {/* Translated Text */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {conversation.targetLang === 'en' ? 'English' : 'Español'}
-                    </div>
-                    <button
-                      onClick={() => handlePlayAudio(conversation.translatedText, conversation.targetLang)}
-                      className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
-                      title="Play translated audio"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed bg-green-50 dark:bg-green-900/20 p-2">
-                    {conversation.translatedText}
-                  </div>
-                </div>
-
-                {/* Source indicator */}
-                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    Source: {conversation.source === 'phrase' ? 'Quick Phrase' : 'Voice Recording'}
-                    {conversation.speaker && ` • Speaker: ${getSpeakerLabel(conversation.speaker)}`}
-                  </span>
-                </div>
+                {/* PlayTranslationCard for this conversation */}
+                <PlayTranslationCard
+                  title={conversation.originalText}
+                  subtitle={conversation.translatedText}
+                  onPlay={() => handlePlayAudio(conversation.translatedText, conversation.targetLang)}
+                  className="mb-0"
+                />
               </div>
             ))}
             {/* Scroll target for auto-scroll to bottom */}
