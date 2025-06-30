@@ -1,11 +1,10 @@
 import React, { forwardRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useIntakeStore } from '../../store/intakeStore';
-import { useConversationStore } from '../../store/conversationStore';
 import { useAppStore } from '../../store/appStore';
 import { Phrase } from '../../data/phrases';
 import { PlayTranslationCard } from '../../components/PlayTranslationCard';
-import { intakeQuestions, IntakeQuestionKey } from '../../data/intakeQuestions';
+import { intakeQuestions } from '../../data/intakeQuestions';
 
 interface IntakeFormSectionProps {
   searchTerm: string;
@@ -25,28 +24,10 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
   ({ searchTerm, onPlayAudio }, ref) => {
     const { intakeData, updateIntakeData } = useIntakeStore();
     const { isIntakeComplete } = useIntakeStore();
-    const { addConversation } = useConversationStore();
     const { sourceLanguage, targetLanguage } = useAppStore();
 
     const getQuestionText = (question: Record<string, string>, langCode: string): string => {
       return question[langCode] || question.en; // Fallback to English
-    };
-
-    const handlePlayQuestion = (questionKey: IntakeQuestionKey) => {
-      const englishText = getQuestionText(intakeQuestions[questionKey], sourceLanguage);
-      const targetText = getQuestionText(intakeQuestions[questionKey], targetLanguage);
-      addConversation({
-        originalText: englishText,
-        translatedText: targetText,
-        originalLang: sourceLanguage,
-        targetLang: targetLanguage,
-        source: 'phrase',
-        speaker: 'officer'
-      });
-      // Use DRY helper for mockPhrase
-      const question = intakeQuestions[questionKey];
-      const mockPhrase: Phrase = makeMockPhrase(question);
-      onPlayAudio(targetText, targetLanguage, mockPhrase, {} as React.MouseEvent);
     };
 
     return (
@@ -142,7 +123,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 }}
                 className='border-b-0'
               />
-              <div className="py-2">
+              <div className="pt-2">
                 <label htmlFor="name-input" className="sr-only">
                   Enter your full name
                 </label>
@@ -152,7 +133,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   value={intakeData.name}
                   onChange={(e) => updateIntakeData({ name: e.target.value })}
                   aria-labelledby="name-question"
-                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                  className="mb-0 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-blue-500 w-full px-4 py-2 border-0 border-b-4 border-b-blue-200 dark:border-b-blue-500 bg-gradient-to-l from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 text-gray-900 dark:text-white transition-colors"
                   placeholder="Enter full name"
                 />
               </div>
@@ -171,7 +152,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 }}
                 className='border-b-0'
               />
-              <div className="py-2">
+              <div className="pt-2">
                 <label htmlFor="country-input" className="sr-only">
                   Enter your country of citizenship
                 </label>
@@ -181,7 +162,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   value={intakeData.country}
                   onChange={(e) => updateIntakeData({ country: e.target.value })}
                   aria-labelledby="country-question"
-                  className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                  className="mb-0 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-blue-500 w-full px-4 py-2 border-0 border-b-4 border-b-blue-200 dark:border-b-blue-500 bg-gradient-to-l from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 text-gray-900 dark:text-white transition-colors"
                   placeholder="Enter country of citizenship"
                 />
               </div>
@@ -201,7 +182,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                   }}
                   className='border-b-0'
                 />
-                <div className="py-2">
+                <div className="pt-2">
                   <label htmlFor="passport-input" className="sr-only">
                     Enter your passport or ID number
                   </label>
@@ -211,7 +192,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                     value={intakeData.passportNumber}
                     onChange={(e) => updateIntakeData({ passportNumber: e.target.value })}
                     aria-labelledby="passport-question"
-                    className="w-full px-4 py-2 bg-transparent border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                    className="mb-0 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-blue-500 w-full px-4 py-2 border-0 border-b-4 border-b-blue-200 dark:border-b-blue-500 bg-gradient-to-l from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 text-gray-900 dark:text-white transition-colors"
                     placeholder="Enter passport or ID number"
                   />
                 </div>
@@ -219,8 +200,8 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
             )}
 
             {/* Additional Information */}
-            <div className="divide-y">
-              <label htmlFor="additional-info" className="block font-medium text-gray-900 dark:text-gray-100 mt-4 mb-1">
+            <div className="">
+              <label htmlFor="additional-info" className="block font-medium text-gray-900 dark:text-gray-100 my-4">
                 <span className="px-4">Additional Information</span>
               </label>
               <textarea
@@ -228,7 +209,7 @@ const IntakeFormSection = forwardRef<HTMLDetailsElement, IntakeFormSectionProps>
                 value={intakeData.additionalInfo}
                 onChange={(e) => updateIntakeData({ additionalInfo: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 border border-none bg-transparent text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
+                className="mb-[-6px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-blue-500 w-full px-4 py-2 border-0 border-transparent border-solid border-b-4 border-b-blue-200 dark:border-b-blue-500 bg-gradient-to-l from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 text-gray-900 dark:text-white transition-colors"
                 placeholder="Any additional notes or information"
               />
             </div>

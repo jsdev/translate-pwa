@@ -19,7 +19,7 @@ export const SpeakerSelector: React.FC<SpeakerSelectorProps> = ({
         <span aria-hidden="true" className="text-sm text-gray-600 dark:text-gray-300 font-medium">
           Speaker
         </span>
-        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1" role="radiogroup" aria-labelledby="speaker-group-label">
+        <div className="flex bg-transparent rounded-lg p-1" role="radiogroup" aria-labelledby="speaker-group-label">
           <div className="relative">
             <label
               htmlFor="speaker-officer"

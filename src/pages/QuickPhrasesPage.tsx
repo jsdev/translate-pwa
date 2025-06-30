@@ -103,7 +103,7 @@ export const QuickPhrasesPage = () => {
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search phrases across categories"
+          placeholder="Search phrases"
           onSearch={handleScrollToPhrases}
         />
       </div>

@@ -111,7 +111,7 @@ export const IntakePage = () => {
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search intake follow up questions"
+          placeholder="Search additional questions..."
           onSearch={handleScrollToAdditionalPhrases}
         />
       </div>
