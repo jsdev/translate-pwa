@@ -43,13 +43,23 @@ export const WalkthroughNavigation: React.FC<WalkthroughNavigationProps> = ({
               <button
                 key={index}
                 onClick={() => onSectionChange(index)}
-                className={`w-2 h-2 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 ${
+                className={`relative w-11 h-11 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 group ${
                   index === currentSection 
-                    ? 'bg-gray-600 dark:bg-gray-400' 
-                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+                    ? 'bg-transparent' 
+                    : 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 title={`Go to ${sections[index].title}`}
-              />
+                aria-label={`Go to ${sections[index].title}`}
+                aria-current={index === currentSection ? 'true' : undefined}
+              >
+                <span
+                  className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full pointer-events-none ${
+                    index === currentSection
+                      ? 'bg-gray-600 dark:bg-gray-400'
+                      : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>
