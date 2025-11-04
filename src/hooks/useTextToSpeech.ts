@@ -84,14 +84,11 @@ export const useTextToSpeech = () => {
 
   const speak = (text: string, lang: string) => {
     if (!('speechSynthesis' in window)) {
-      console.warn('Speech synthesis not supported in this browser');
       return;
     }
 
     const langInfo = voiceStatus[lang];
     if (!langInfo?.available) {
-      console.warn(`No TTS voice available for language: ${lang}. Available languages:`, 
-        Object.keys(voiceStatus).filter(l => voiceStatus[l].available));
       return;
     }
 
@@ -104,19 +101,17 @@ export const useTextToSpeech = () => {
     if (selectedVoice) {
       utterance.voice = selectedVoice;
       utterance.lang = selectedVoice.lang;
-      console.log(`Speaking "${text}" using voice:`, selectedVoice.name, selectedVoice.lang);
     } else {
       // Fallback to language code
       const fallbackLang = languageVoiceMap[lang]?.[0] || lang;
       utterance.lang = fallbackLang;
-      console.log(`Speaking "${text}" using fallback language:`, fallbackLang);
     }
     
     utterance.rate = 0.8;
     utterance.volume = 1;
     
-    utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event.error);
+    utterance.onerror = () => {
+      // Silent error handling
     };
     
     speechSynthesis.speak(utterance);
