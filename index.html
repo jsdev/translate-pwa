@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="/translate-pwa/">
+    <link rel="icon" type="image/svg+xml" href="vite.svg" />
+    <link rel="alternate icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:;" />
+    <meta name="theme-color" content="#2563EB" />
+    
+    <!-- Enhanced SEO Meta Tags -->
+    <meta name="description" content="DHS Translation Tool - Secure, government-compliant communication app for law enforcement personnel. Real-time translation with Section 508 accessibility compliance." />
+    <meta name="keywords" content="ICE, CBP, translation, law enforcement, government, secure communication, accessibility, Section 508, bilingual, Spanish, English" />
+    <meta name="author" content="DHS Technology Division" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="distribution" content="global" />
+    <meta name="rating" content="general" />
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="DHS Translation Tool - Secure Law Enforcement Communication" />
+    <meta property="og:description" content="Government-compliant translation application for DHS agents. Features real-time translation, accessibility compliance, and secure communication protocols." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://USERNAME.github.io/translate-pwa/" />
+    <meta property="og:image" content="https://USERNAME.github.io/translate-pwa/icon-512.svg" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:site_name" content="DHS Translation Tool" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DHS Translation Tool" />
+    <meta name="twitter:description" content="Secure translation tool for law enforcement with government compliance and accessibility features." />
+    <meta name="twitter:image" content="https://USERNAME.github.io/translate-pwa/icon-512.svg" />
+    
+    <!-- Canonical URL for SEO -->
+    <link rel="canonical" href="https://USERNAME.github.io/translate-pwa/" />
+    
+    <!-- SEO Files -->
+    <link rel="sitemap" type="application/xml" href="sitemap.xml" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Structured Data for SEO (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DHS Translation Tool",
+      "description": "Secure, government-compliant translation application for DHS law enforcement personnel",
+      "url": "https://USERNAME.github.io/translate-pwa/",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "DHS Technology Division",
+        "url": "https://www.ice.gov"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "U.S. Immigration and Customs Enforcement",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://USERNAME.github.io/translate-pwa/icon-512.svg"
+        }
+      },
+      "featureList": [
+        "Real-time translation between English and Spanish",
+        "Section 508 accessibility compliance",
+        "Secure government-grade communication",
+        "Voice recognition and text-to-speech",
+        "Offline capability",
+        "Mobile-optimized interface"
+      ],
+      "softwareRequirements": "Modern web browser with JavaScript enabled",
+      "browserRequirements": "Chrome 90+, Firefox 88+, Safari 14+, Edge 90+",
+      "accessibilityAPI": "ARIA",
+      "accessibilityControl": "fullKeyboardControl,fullMouseControl,fullTouchControl",
+      "accessibilityFeature": "alternativeText,captions,structuralNavigation,synchronizedAudioText",
+      "accessibilityHazard": "none",
+      "accessibilitySummary": "Fully accessible application compliant with Section 508 and WCAG 2.1 AA standards"
+    }
+    </script>
+    
+    <!-- GitHub Pages SPA support -->
+    <script>
+      // Handle GitHub Pages SPA routing for /translate-pwa/ subdirectory
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    
+    <!-- Lighthouse Performance optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" />
+    
+    <!-- Apple PWA meta tags for better Lighthouse PWA score -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ICE Translate">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    
+    <!-- Preload critical resources for better performance -->
+    <link rel="modulepreload" href="data:application/octet-stream;base64,aW1wb3J0IFJlYWN0LCB7IFN0cmljdE1vZGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IGNyZWF0ZVJvb3QgfSBmcm9tICdyZWFjdC1kb20vY2xpZW50JzsKaW1wb3J0IEFwcCBmcm9tICcuL0FwcC50c3gnOwppbXBvcnQgJy4vaW5kZXguY3NzJzsKCi8vIEV4dGVuZCBXaW5kb3cgaW50ZXJmYWNlIGZvciBUcnVzdGVkIFR5cGVzCmRlY2xhcmUgZ2xvYmFsIHsKICBpbnRlcmZhY2UgV2luZG93IHsKICAgIHRydXN0ZWRUeXBlcz86IHsKICAgICAgY3JlYXRlUG9saWN5OiAobmFtZTogc3RyaW5nLCBwb2xpY3k6IGFueSkgPT4gdm9pZDsKICAgIH07CiAgfQp9CgovLyBFbmFibGUgVHJ1c3RlZCBUeXBlcyBpZiBzdXBwb3J0ZWQKaWYgKHdpbmRvdy50cnVzdGVkVHlwZXMgJiYgd2luZG93LnRydXN0ZWRUeXBlcy5jcmVhdGVQb2xpY3kpIHsKICB3aW5kb3cudHJ1c3RlZFR5cGVzLmNyZWF0ZVBvbGljeSgnZGVmYXVsdCcsIHsKICAgIGNyZWF0ZUhUTUw6IChpbnB1dDogc3RyaW5nKSA9PiBpbnB1dCwgLy8gU2FuaXRpemUgYXMgbmVlZGVkLCBlLmcuLCB1c2luZyBET01QdXJpZnkKICAgIGNyZWF0ZVNjcmlwdDogKGlucHV0OiBzdHJpbmcpID0+IGlucHV0LAogICAgY3JlYXRlU2NyaXB0VVJMOiAoaW5wdXQ6IHN0cmluZykgPT4gaW5wdXQsCiAgfSk7Cn0KCmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jvb3QnKSEpLnJlbmRlcigKICA8U3RyaWN0TW9kZT4KICAgIDxBcHAgLz4KICA8L1N0cmljdE1vZGU+Cik7Cg==" />
+    
+    <!-- SEO-optimized title with keywords -->
+    <title>DHS Translation Tool - Secure Law Enforcement Communication | Government Compliant</title>
+    <script type="module" crossorigin src="/translate-pwa/assets/index-BX0-Rc9U.js"></script>
+    <link rel="modulepreload" crossorigin href="/translate-pwa/assets/vendor-nd2XC2Db.js">
+    <link rel="modulepreload" crossorigin href="/translate-pwa/assets/router-BhWXgRg3.js">
+    <link rel="modulepreload" crossorigin href="/translate-pwa/assets/icons-BOHPZFIk.js">
+    <link rel="modulepreload" crossorigin href="/translate-pwa/assets/store-MAfVB5I5.js">
+    <link rel="stylesheet" crossorigin href="/translate-pwa/assets/index-wP0Ih8_5.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

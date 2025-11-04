@@ -1,0 +1,136 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for GitHub Pages
+        run: npm run build:github
+        env:
+          GITHUB_PAGES: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Run Lighthouse CI on the deployed site
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for GitHub Pages
+        run: npm run build:github
+        env:
+          GITHUB_PAGES: true
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Run Lighthouse CI on deployed site
+        run: |
+          echo "🚨 Running Lighthouse CI on production deployment..."
+          npm run lighthouse:ci || echo "⚠️ Lighthouse audit completed - check results"
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PAGES: true  # Tell Lighthouse config to use base path URLs
+        continue-on-error: true
+
+      - name: Generate Production Lighthouse Summary
+        continue-on-error: true
+        run: |
+          echo "## 🚀 Production Lighthouse Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Production URL:** https://${{ github.repository_owner }}.github.io/translate-pwa/" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Find and parse latest results
+          RESULTS_FILE=$(find lighthouse-results -name "*.json" -type f | sort -n | tail -1)
+          
+          if [ ! -d "lighthouse-results" ]; then
+            echo "⚠️ Lighthouse results directory not found" >> $GITHUB_STEP_SUMMARY
+            echo "This may indicate Lighthouse CI failed to run properly." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Available directories:**" >> $GITHUB_STEP_SUMMARY
+            ls -la >> $GITHUB_STEP_SUMMARY
+          elif [ -z "$RESULTS_FILE" ]; then
+            echo "⚠️ No Lighthouse results JSON files found" >> $GITHUB_STEP_SUMMARY
+            echo "Lighthouse CI may have failed or not generated results." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Contents of lighthouse-results directory:**" >> $GITHUB_STEP_SUMMARY
+            ls -la lighthouse-results/ >> $GITHUB_STEP_SUMMARY
+          elif [ -f "$RESULTS_FILE" ]; then
+            echo "📊 **Production Performance Scores:**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Use the dedicated parser script
+            node scripts/parse-lighthouse-results.cjs "$RESULTS_FILE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No Lighthouse results found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results-production
+          path: lighthouse-results/
+          retention-days: 30

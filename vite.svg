@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bg)" stroke="#1e40af" stroke-width="8"/>
+  
+  <!-- Translation/Language icon -->
+  <g fill="white" stroke="none">
+    <!-- Globe/World icon -->
+    <circle cx="256" cy="256" r="120" fill="none" stroke="white" stroke-width="6"/>
+    <path d="M136 256 Q196 200 256 256 Q316 312 376 256" stroke="white" stroke-width="6" fill="none"/>
+    <path d="M136 256 Q196 312 256 256 Q316 200 376 256" stroke="white" stroke-width="6" fill="none"/>
+    <line x1="256" y1="136" x2="256" y2="376" stroke="white" stroke-width="6"/>
+    <line x1="136" y1="256" x2="376" y2="256" stroke="white" stroke-width="6"/>
+    
+    <!-- Text/Translation elements -->
+    <rect x="180" y="320" width="60" height="8" rx="4" fill="white" opacity="0.9"/>
+    <rect x="270" y="320" width="60" height="8" rx="4" fill="white" opacity="0.9"/>
+    <rect x="190" y="340" width="40" height="6" rx="3" fill="white" opacity="0.7"/>
+    <rect x="280" y="340" width="40" height="6" rx="3" fill="white" opacity="0.7"/>
+    
+    <!-- Arrow indicating translation -->
+    <path d="M250 330 L262 330 L256 338 Z" fill="white" opacity="0.8"/>
+  </g>
+  
+  <!-- ICE badge/shield element -->
+  <g fill="white" opacity="0.9">
+    <path d="M200 180 Q200 160 220 160 L292 160 Q312 160 312 180 L312 200 Q312 220 256 240 Q200 220 200 200 Z" 
+          fill="white" stroke="#2563EB" stroke-width="2"/>
+    <text x="256" y="195" text-anchor="middle" fill="#2563EB" font-family="Arial, sans-serif" font-size="16" font-weight="bold">ICE</text>
+  </g>
+</svg>

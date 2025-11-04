@@ -1,0 +1,24 @@
+# Netlify redirects file for Single Page Application (SPA)
+# This ensures all routes are handled by React Router
+
+# Handle SPA routing - redirect all requests to index.html
+# The 200 status code serves index.html without changing the URL
+/*    /index.html   200
+
+# Optional: Redirect root domain to specific subdomain (if needed)
+# https://example.com/*  https://www.example.com/:splat  301!
+
+# Security: Block access to sensitive files
+/.env*  /404.html  404!
+/config/*  /404.html  404!
+/src/*  /404.html  404!
+
+# API routes (if you add backend later)
+/api/*  /api/:splat  200
+
+# Static assets should be served normally (this is implicit but good to document)
+/static/*  /static/:splat  200
+/assets/*  /assets/:splat  200
+/manifest.json  /manifest.json  200
+/favicon.ico  /favicon.ico  200
+/vite.svg  /vite.svg  200

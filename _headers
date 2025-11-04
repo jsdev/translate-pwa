@@ -1,0 +1,47 @@
+# Production Security Headers for GitHub Pages
+# These are strict headers for maximum security in production
+/*
+  # Security headers for 100% Lighthouse Best Practices score
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # HTTP Strict Transport Security (HSTS) - forces HTTPS
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  
+  # Cross-Origin policies for isolation
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+  
+  # Permissions Policy - restrict dangerous features
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), fullscreen=(self), display-capture=()
+  
+  # Strict Content Security Policy for production
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; worker-src 'self'
+
+# Specific content types and caching for assets
+/manifest.json
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=86400
+
+# SVG icons
+*.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=31536000
+
+# Favicon
+/favicon.ico
+  Content-Type: image/x-icon
+  Cache-Control: public, max-age=31536000
+
+# JavaScript modules - fix MIME type issue for ES modules
+*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000
+
+# CSS files
+*.css
+  Content-Type: text/css; charset=utf-8
+  Cache-Control: public, max-age=31536000
+  Cache-Control: public, max-age=31536000
