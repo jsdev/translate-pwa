@@ -66,9 +66,9 @@ export const WalkthroughNavigation: React.FC<WalkthroughNavigationProps> = ({
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
           {sections[currentSection].title}
         </h1>
-        <p className="text-gray-700 dark:text-gray-300">
+        <h2 className="text-gray-700 dark:text-gray-300">
           {sections[currentSection].subtitle}
-        </p>
+        </h2>
       </div>
 
       {/* Footer Navigation */}
