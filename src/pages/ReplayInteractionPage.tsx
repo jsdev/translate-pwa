@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useConversationStore } from '../store/conversationStore';
+import { useConversationStore, ConversationEntry } from '../store/conversationStore';
 import { Volume2, CheckCircle } from 'lucide-react';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
 
@@ -9,20 +9,20 @@ export const ReplayInteractionPage: React.FC = () => {
   const [playedIds, setPlayedIds] = useState<string[]>([]);
   const [audioLang, setAudioLang] = useState<'en' | 'foreign' | 'source'>('en');
 
-  const getAudioText = (conversation: any) => {
+  const getAudioText = (conversation: ConversationEntry) => {
     if (audioLang === 'en') return conversation.originalLang === 'en' ? conversation.originalText : conversation.translatedText;
     if (audioLang === 'foreign') return conversation.originalLang !== 'en' ? conversation.originalText : conversation.translatedText;
     // 'source' returns the original text regardless of language
     return conversation.originalText;
   };
 
-  const getAudioLang = (conversation: any) => {
+  const getAudioLang = (conversation: ConversationEntry) => {
     if (audioLang === 'en') return 'en';
     if (audioLang === 'foreign') return conversation.originalLang !== 'en' ? conversation.originalLang : conversation.targetLang;
     return conversation.originalLang;
   };
 
-  const handlePlay = (conversation: any) => {
+  const handlePlay = (conversation: ConversationEntry) => {
     const text = getAudioText(conversation);
     const lang = getAudioLang(conversation);
     speak(text, lang);
