@@ -7,7 +7,7 @@ Disallow: /admin/
 Disallow: /*.json$
 
 # Sitemap location
-Sitemap: https://USERNAME.github.io/translate-pwa/sitemap.xml
+Sitemap: https://jsdev.github.io/translate-pwa/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1

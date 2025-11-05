@@ -6,49 +6,49 @@
   
   <!-- Main pages -->
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/</loc>
+    <loc>https://jsdev.github.io/translate-pwa/</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/intake</loc>
+    <loc>https://jsdev.github.io/translate-pwa/intake</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/phrases</loc>
+    <loc>https://jsdev.github.io/translate-pwa/phrases</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/translate</loc>
+    <loc>https://jsdev.github.io/translate-pwa/translate</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/record</loc>
+    <loc>https://jsdev.github.io/translate-pwa/record</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/conversations</loc>
+    <loc>https://jsdev.github.io/translate-pwa/conversations</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://USERNAME.github.io/translate-pwa/settings</loc>
+    <loc>https://jsdev.github.io/translate-pwa/settings</loc>
     <lastmod>2025-06-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

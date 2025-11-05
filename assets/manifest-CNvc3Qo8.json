@@ -1,0 +1,48 @@
+{
+  "name": "DHS Translation Tool - Secure Law Enforcement Communication",
+  "short_name": "ICE Translate",
+  "description": "Government-compliant translation application for DHS law enforcement personnel. Features real-time translation, accessibility compliance, and secure communication protocols.",
+  "start_url": "/translate-pwa/",
+  "display": "standalone",
+  "theme_color": "#2563EB",
+  "background_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "scope": "/translate-pwa/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "productivity",
+    "business",
+    "government",
+    "utilities"
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "DHS Translation Tool interface"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/translate-pwa/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/translate-pwa/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/translate-pwa/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

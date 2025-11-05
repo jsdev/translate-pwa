@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <base href="/translate-pwa/">
-    <link rel="icon" type="image/svg+xml" href="vite.svg" />
-    <link rel="alternate icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/translate-pwa/assets/vite-DfLhKALW.svg" />
+    <link rel="alternate icon" href="/translate-pwa/assets/favicon-CVFESynC.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:;" />
-    <meta name="theme-color" content="#2563EB" />
+      <!-- Content Security Policy: allow data: for scripts because Vite inlines small modulepreload payloads as data: URIs -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' data:; script-src-elem 'self' 'unsafe-inline' data:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:;" />
+  <meta name="theme-color" content="#2563EB" />
     
     <!-- Enhanced SEO Meta Tags -->
     <meta name="description" content="DHS Translation Tool - Secure, government-compliant communication app for law enforcement personnel. Real-time translation with Section 508 accessibility compliance." />
@@ -23,8 +24,8 @@
     <meta property="og:title" content="DHS Translation Tool - Secure Law Enforcement Communication" />
     <meta property="og:description" content="Government-compliant translation application for DHS agents. Features real-time translation, accessibility compliance, and secure communication protocols." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://USERNAME.github.io/translate-pwa/" />
-    <meta property="og:image" content="https://USERNAME.github.io/translate-pwa/icon-512.svg" />
+    <meta property="og:url" content="https://jsdev.github.io/translate-pwa/" />
+    <meta property="og:image" content="https://jsdev.github.io/translate-pwa/icon-512.svg" />
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
     <meta property="og:site_name" content="DHS Translation Tool" />
@@ -34,13 +35,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DHS Translation Tool" />
     <meta name="twitter:description" content="Secure translation tool for law enforcement with government compliance and accessibility features." />
-    <meta name="twitter:image" content="https://USERNAME.github.io/translate-pwa/icon-512.svg" />
+   <meta name="twitter:image" content="https://jsdev.github.io/translate-pwa/icon-512.svg" />
     
     <!-- Canonical URL for SEO -->
-    <link rel="canonical" href="https://USERNAME.github.io/translate-pwa/" />
+    <link rel="canonical" href="https://jsdev.github.io/translate-pwa/" />
     
     <!-- SEO Files -->
-    <link rel="sitemap" type="application/xml" href="sitemap.xml" />
+    <link rel="sitemap" type="application/xml" href="data:text/xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHVybHNldCB4bWxucz0iaHR0cDovL3d3dy5zaXRlbWFwcy5vcmcvc2NoZW1hcy9zaXRlbWFwLzAuOSIgCiAgICAgICAgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIKICAgICAgICB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly93d3cuc2l0ZW1hcHMub3JnL3NjaGVtYXMvc2l0ZW1hcC8wLjkgCiAgICAgICAgaHR0cDovL3d3dy5zaXRlbWFwcy5vcmcvc2NoZW1hcy9zaXRlbWFwLzAuOS9zaXRlbWFwLnhzZCI+CiAgCiAgPCEtLSBNYWluIHBhZ2VzIC0tPgogIDx1cmw+CiAgICA8bG9jPmh0dHBzOi8vVVNFUk5BTUUuZ2l0aHViLmlvL3RyYW5zbGF0ZS1wd2EvPC9sb2M+CiAgICA8bGFzdG1vZD4yMDI1LTA2LTI4PC9sYXN0bW9kPgogICAgPGNoYW5nZWZyZXE+d2Vla2x5PC9jaGFuZ2VmcmVxPgogICAgPHByaW9yaXR5PjEuMDwvcHJpb3JpdHk+CiAgPC91cmw+CiAgCiAgPHVybD4KICAgIDxsb2M+aHR0cHM6Ly9VU0VSTkFNRS5naXRodWIuaW8vdHJhbnNsYXRlLXB3YS9pbnRha2U8L2xvYz4KICAgIDxsYXN0bW9kPjIwMjUtMDYtMjg8L2xhc3Rtb2Q+CiAgICA8Y2hhbmdlZnJlcT5tb250aGx5PC9jaGFuZ2VmcmVxPgogICAgPHByaW9yaXR5PjAuOTwvcHJpb3JpdHk+CiAgPC91cmw+CiAgCiAgPHVybD4KICAgIDxsb2M+aHR0cHM6Ly9VU0VSTkFNRS5naXRodWIuaW8vdHJhbnNsYXRlLXB3YS9waHJhc2VzPC9sb2M+CiAgICA8bGFzdG1vZD4yMDI1LTA2LTI4PC9sYXN0bW9kPgogICAgPGNoYW5nZWZyZXE+bW9udGhseTwvY2hhbmdlZnJlcT4KICAgIDxwcmlvcml0eT4wLjg8L3ByaW9yaXR5PgogIDwvdXJsPgogIAogIDx1cmw+CiAgICA8bG9jPmh0dHBzOi8vVVNFUk5BTUUuZ2l0aHViLmlvL3RyYW5zbGF0ZS1wd2EvdHJhbnNsYXRlPC9sb2M+CiAgICA8bGFzdG1vZD4yMDI1LTA2LTI4PC9sYXN0bW9kPgogICAgPGNoYW5nZWZyZXE+bW9udGhseTwvY2hhbmdlZnJlcT4KICAgIDxwcmlvcml0eT4wLjk8L3ByaW9yaXR5PgogIDwvdXJsPgogIAogIDx1cmw+CiAgICA8bG9jPmh0dHBzOi8vVVNFUk5BTUUuZ2l0aHViLmlvL3RyYW5zbGF0ZS1wd2EvcmVjb3JkPC9sb2M+CiAgICA8bGFzdG1vZD4yMDI1LTA2LTI4PC9sYXN0bW9kPgogICAgPGNoYW5nZWZyZXE+bW9udGhseTwvY2hhbmdlZnJlcT4KICAgIDxwcmlvcml0eT4wLjc8L3ByaW9yaXR5PgogIDwvdXJsPgogIAogIDx1cmw+CiAgICA8bG9jPmh0dHBzOi8vVVNFUk5BTUUuZ2l0aHViLmlvL3RyYW5zbGF0ZS1wd2EvY29udmVyc2F0aW9uczwvbG9jPgogICAgPGxhc3Rtb2Q+MjAyNS0wNi0yODwvbGFzdG1vZD4KICAgIDxjaGFuZ2VmcmVxPndlZWtseTwvY2hhbmdlZnJlcT4KICAgIDxwcmlvcml0eT4wLjg8L3ByaW9yaXR5PgogIDwvdXJsPgogIAogIDx1cmw+CiAgICA8bG9jPmh0dHBzOi8vVVNFUk5BTUUuZ2l0aHViLmlvL3RyYW5zbGF0ZS1wd2Evc2V0dGluZ3M8L2xvYz4KICAgIDxsYXN0bW9kPjIwMjUtMDYtMjg8L2xhc3Rtb2Q+CiAgICA8Y2hhbmdlZnJlcT5tb250aGx5PC9jaGFuZ2VmcmVxPgogICAgPHByaW9yaXR5PjAuNjwvcHJpb3JpdHk+CiAgPC91cmw+CiAgCjwvdXJsc2V0Pgo=" />
     <meta name="robots" content="index, follow" />
     
     <!-- Structured Data for SEO (JSON-LD) -->
@@ -50,7 +51,11 @@
       "@type": "WebApplication",
       "name": "DHS Translation Tool",
       "description": "Secure, government-compliant translation application for DHS law enforcement personnel",
+<<<<<<< HEAD
       "url": "https://USERNAME.github.io/translate-pwa/",
+=======
+      "url": "https://jsdev.github.io/translate-pwa/",
+>>>>>>> main
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web Browser",
       "offers": {
@@ -68,7 +73,11 @@
         "name": "U.S. Immigration and Customs Enforcement",
         "logo": {
           "@type": "ImageObject",
+<<<<<<< HEAD
           "url": "https://USERNAME.github.io/translate-pwa/icon-512.svg"
+=======
+          "url": "https://jsdev.github.io/translate-pwa/icon-512.svg"
+>>>>>>> main
         }
       },
       "featureList": [
@@ -109,13 +118,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="/translate-pwa/assets/manifest-CNvc3Qo8.json" />
     
     <!-- Apple PWA meta tags for better Lighthouse PWA score -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ICE Translate">
-    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="/translate-pwa/assets/icon-192-7wRgqZzF.svg">
     
     <!-- Preload critical resources for better performance -->
     <link rel="modulepreload" href="data:application/octet-stream;base64,aW1wb3J0IFJlYWN0LCB7IFN0cmljdE1vZGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IGNyZWF0ZVJvb3QgfSBmcm9tICdyZWFjdC1kb20vY2xpZW50JzsKaW1wb3J0IEFwcCBmcm9tICcuL0FwcC50c3gnOwppbXBvcnQgJy4vaW5kZXguY3NzJzsKCi8vIEV4dGVuZCBXaW5kb3cgaW50ZXJmYWNlIGZvciBUcnVzdGVkIFR5cGVzCmRlY2xhcmUgZ2xvYmFsIHsKICBpbnRlcmZhY2UgV2luZG93IHsKICAgIHRydXN0ZWRUeXBlcz86IHsKICAgICAgY3JlYXRlUG9saWN5OiAobmFtZTogc3RyaW5nLCBwb2xpY3k6IGFueSkgPT4gdm9pZDsKICAgIH07CiAgfQp9CgovLyBFbmFibGUgVHJ1c3RlZCBUeXBlcyBpZiBzdXBwb3J0ZWQKaWYgKHdpbmRvdy50cnVzdGVkVHlwZXMgJiYgd2luZG93LnRydXN0ZWRUeXBlcy5jcmVhdGVQb2xpY3kpIHsKICB3aW5kb3cudHJ1c3RlZFR5cGVzLmNyZWF0ZVBvbGljeSgnZGVmYXVsdCcsIHsKICAgIGNyZWF0ZUhUTUw6IChpbnB1dDogc3RyaW5nKSA9PiBpbnB1dCwgLy8gU2FuaXRpemUgYXMgbmVlZGVkLCBlLmcuLCB1c2luZyBET01QdXJpZnkKICAgIGNyZWF0ZVNjcmlwdDogKGlucHV0OiBzdHJpbmcpID0+IGlucHV0LAogICAgY3JlYXRlU2NyaXB0VVJMOiAoaW5wdXQ6IHN0cmluZykgPT4gaW5wdXQsCiAgfSk7Cn0KCmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jvb3QnKSEpLnJlbmRlcigKICA8U3RyaWN0TW9kZT4KICAgIDxBcHAgLz4KICA8L1N0cmljdE1vZGU+Cik7Cg==" />
