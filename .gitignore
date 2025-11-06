@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+<<<<<<< HEAD
 
 # Chrome/Browser downloads for testing
 chrome/
@@ -88,3 +89,4 @@ Icon?
 
 # Service worker cache
 sw.js.map
+

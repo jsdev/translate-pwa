@@ -1,0 +1,17 @@
+{
+  "name": "ICE/CBP Translation Tool",
+  "short_name": "ICE Translate",
+  "description": "Secure translation tool for ICE/CBP agents",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2563EB",
+  "background_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

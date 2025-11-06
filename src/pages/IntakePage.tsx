@@ -1,0 +1,1 @@
+export { IntakePage } from './intake';
